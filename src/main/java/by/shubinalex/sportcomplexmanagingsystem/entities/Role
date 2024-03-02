@@ -1,0 +1,5 @@
+package by.shubinalex.sportcomplexmanagingsystem.entities;
+
+public enum Role {
+    ADMIN, MANAGER, MARKETER, ACCOUNTANT, COACH;
+}
