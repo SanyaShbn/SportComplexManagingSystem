@@ -25,6 +25,10 @@ public class ComplexFacility {
 
     @Builder.Default
     @OneToMany(mappedBy = "complexFacility")
+    private List<Training> trainings = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "complexFacility")
     private List<EmployeeFacility> employeeFacilities = new ArrayList<>();
 
     public ComplexFacility(String facilityType, int trainingsAmount, LocalDateTime cleaningServiceTime) {
@@ -33,5 +37,10 @@ public class ComplexFacility {
         this.trainingsAmount = trainingsAmount;
         this.cleaningServiceTime = cleaningServiceTime;
 
+    }
+
+    public void addTraining(Training training){
+        trainings.add(training);
+        training.setComplexFacility(this);
     }
 }
