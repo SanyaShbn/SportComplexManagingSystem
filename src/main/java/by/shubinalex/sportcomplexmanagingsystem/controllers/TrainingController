@@ -1,0 +1,45 @@
+package by.shubinalex.sportcomplexmanagingsystem.Controllers;
+
+import by.shubinalex.sportcomplexmanagingsystem.entities.AccountCredentials;
+import by.shubinalex.sportcomplexmanagingsystem.entities.ComplexFacility;
+import by.shubinalex.sportcomplexmanagingsystem.entities.ServiceEmployee;
+import by.shubinalex.sportcomplexmanagingsystem.entities.Training;
+import by.shubinalex.sportcomplexmanagingsystem.repo.ComplexFacilityRepo;
+import by.shubinalex.sportcomplexmanagingsystem.repo.ServiceEmployeeRepo;
+import by.shubinalex.sportcomplexmanagingsystem.repo.TrainingRepo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/trainings")
+public class TrainingController {
+    @Autowired
+    private TrainingRepo trainingRepo;
+
+    ComplexFacilityRepo complexFacilityRepo;
+
+    @GetMapping("")
+    public Iterable<Training> getTrainings() {
+        return trainingRepo.findAll();
+    }
+
+    @PostMapping( "")
+    public void saveTrainingWithComplexFacility(@RequestBody Training training, @RequestParam Long complexFacilityId) {
+
+        Optional<ComplexFacility> complexFacilityOptional = complexFacilityRepo.findById(complexFacilityId);
+
+        if(complexFacilityOptional.isPresent()) {
+            ComplexFacility complexFacility = complexFacilityOptional.get();
+
+//            training.setComplexFacility(complexFacility);
+
+            complexFacility.addTraining(training);
+
+            trainingRepo.save(training);
+        } else {
+//            Обработка ошибки
+        }
+    }
+}
