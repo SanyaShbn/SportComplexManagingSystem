@@ -1,31 +1,50 @@
 package by.shubinalex.sportcomplexmanagingsystem.Controllers;
 
-import by.shubinalex.sportcomplexmanagingsystem.entities.AccountCredentials;
 import by.shubinalex.sportcomplexmanagingsystem.entities.ComplexFacility;
-import by.shubinalex.sportcomplexmanagingsystem.entities.ServiceEmployee;
 import by.shubinalex.sportcomplexmanagingsystem.entities.Training;
 import by.shubinalex.sportcomplexmanagingsystem.repo.ComplexFacilityRepo;
-import by.shubinalex.sportcomplexmanagingsystem.repo.ServiceEmployeeRepo;
 import by.shubinalex.sportcomplexmanagingsystem.repo.TrainingRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/trainings")
 public class TrainingController {
+
     @Autowired
     private TrainingRepo trainingRepo;
 
-    ComplexFacilityRepo complexFacilityRepo;
+    @Autowired
+    private ComplexFacilityRepo complexFacilityRepo;
 
-    @GetMapping("")
+    @RequestMapping(value = "/trainings", method = RequestMethod.GET)
     public Iterable<Training> getTrainings() {
         return trainingRepo.findAll();
     }
-
-    @PostMapping( "")
+//
+//    @GetMapping("/{id}")
+//    public Training getTraining(@PathVariable Long idTraining) {
+//        return trainingRepo.findById(idTraining).orElseThrow(RuntimeException::new);
+//    }
+//    @PutMapping("/{id}")
+//    public ResponseEntity updateTraining(@PathVariable Long idTraining, @RequestBody Training training) {
+//        Training currentTraining = trainingRepo.findById(idTraining).orElseThrow(RuntimeException::new);
+//        currentTraining.setTrainingDateTime(training.getTrainingDateTime());
+//        currentTraining .setCost(training.getCost());
+//        currentTraining  = trainingRepo.save(training);
+//
+//        return ResponseEntity.ok(currentTraining);
+//    }
+//
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity deleteTraining(@PathVariable Long idTraining) {
+//        trainingRepo.deleteById( idTraining);
+//        return ResponseEntity.ok().build();
+//    }
+    @RequestMapping(value = "/api/save_trainings", method = RequestMethod.POST)
     public void saveTrainingWithComplexFacility(@RequestBody Training training, @RequestParam Long complexFacilityId) {
 
         Optional<ComplexFacility> complexFacilityOptional = complexFacilityRepo.findById(complexFacilityId);
@@ -33,13 +52,22 @@ public class TrainingController {
         if(complexFacilityOptional.isPresent()) {
             ComplexFacility complexFacility = complexFacilityOptional.get();
 
-//            training.setComplexFacility(complexFacility);
-
             complexFacility.addTraining(training);
+            complexFacility.setTrainingsAmount(complexFacility.getTrainingsAmount() + 1);
 
             trainingRepo.save(training);
         } else {
 //            Обработка ошибки
         }
+    }
+
+    @RequestMapping(value = "/api/trainings/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity deleteTraining(@PathVariable Long id) {
+        Optional<Training> training = trainingRepo.findById(id);
+        Optional<ComplexFacility> currentComplexFacility = Optional.ofNullable(training.get().getComplexFacility());
+        Optional<ComplexFacility> updatedComplexFacility = complexFacilityRepo.findById(currentComplexFacility.get().getIdComplexFacility());
+        updatedComplexFacility.get().setTrainingsAmount(updatedComplexFacility.get().getTrainingsAmount() - 1);
+        trainingRepo.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 }
