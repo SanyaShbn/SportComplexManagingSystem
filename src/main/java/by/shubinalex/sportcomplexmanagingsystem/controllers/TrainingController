@@ -70,4 +70,31 @@ public class TrainingController {
         trainingRepo.deleteById(id);
         return ResponseEntity.ok().build();
     }
+
+    @RequestMapping(value = "/api/trainings/{id}", method = RequestMethod.PUT)
+    public ResponseEntity updateTraining(@RequestBody Training updated_training, @PathVariable Long id, @RequestParam Long complexFacilityId) {
+        Training current_training = trainingRepo.findById(id).orElseThrow(RuntimeException::new);
+        current_training.setCost(updated_training.getCost());
+        current_training.setTrainingDateTime(updated_training.getTrainingDateTime());
+
+        Optional<ComplexFacility> complexFacilityOptional = complexFacilityRepo.findById(complexFacilityId);
+
+        if(complexFacilityOptional.isPresent()) {
+            ComplexFacility complexFacility = complexFacilityOptional.get();
+
+            Optional<ComplexFacility> updatedPreviousComplexFacility = complexFacilityRepo.findById(current_training.getComplexFacility().getIdComplexFacility());
+            updatedPreviousComplexFacility.get().setTrainingsAmount(updatedPreviousComplexFacility.get().getTrainingsAmount() - 1);
+
+            complexFacility.addTraining(current_training);
+            complexFacility.setTrainingsAmount(complexFacility.getTrainingsAmount() + 1);
+
+
+            trainingRepo.save(current_training);
+        } else {
+//            Обработка ошибки
+        }
+
+
+        return ResponseEntity.ok().build();
+    }
 }
