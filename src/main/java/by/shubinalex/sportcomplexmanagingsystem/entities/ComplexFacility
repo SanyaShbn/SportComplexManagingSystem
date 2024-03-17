@@ -29,7 +29,7 @@ public class ComplexFacility {
 
     @Builder.Default
     @JsonIgnore
-    @OneToMany(cascade=CascadeType.ALL, mappedBy = "complexFacility")
+    @OneToMany(cascade=CascadeType.ALL, mappedBy = "complexFacility", fetch=FetchType.LAZY)
     private List<Training> trainings = new ArrayList<>();
 
     @Builder.Default
