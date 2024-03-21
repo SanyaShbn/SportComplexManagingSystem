@@ -1,18 +1,19 @@
 package by.shubinalex.sportcomplexmanagingsystem.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class Training {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -20,7 +21,13 @@ public class Training {
     private LocalDateTime trainingDateTime;
     private Double cost;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY)
     private ComplexFacility complexFacility;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "training")
+    @JsonIgnore
+    private List<ClientTraining> clientTrainings = new ArrayList<>();
 
 }
