@@ -1,0 +1,42 @@
+package by.shubinalex.sportcomplexmanagingsystem.Controllers;
+
+import by.shubinalex.sportcomplexmanagingsystem.entities.*;
+import by.shubinalex.sportcomplexmanagingsystem.repo.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+public class ClientMembershipController {
+    @Autowired
+    private ClientMembershipRepo clientMembershipRepo;
+    @Autowired
+    private ClientRepo clientRepo;
+    @Autowired
+    private SportComplexMembershipRepo sportComplexMembershipRepo;
+
+    @RequestMapping(value = "/client_memberships", method = RequestMethod.GET)
+    public Iterable<ClientMembership> getClientMemberships() {
+        return clientMembershipRepo.findAll();
+    }
+
+    @RequestMapping(value = "/api/save_client_membership", method = RequestMethod.POST)
+    public void saveClientMembership(@RequestParam Long clientId, @RequestParam Long membershipId) {
+        ClientMembership clientMembership = new ClientMembership();
+        Client client = clientRepo.findById(clientId).orElseThrow(RuntimeException::new);
+        SportComplexMembership sportComplexMembership = sportComplexMembershipRepo.findById(membershipId).orElseThrow(RuntimeException::new);
+        clientMembership.setClient(client);
+        clientMembership.setSportComplexMembership(sportComplexMembership);
+        clientMembershipRepo.save(clientMembership);
+    }
+
+    @RequestMapping(value = "/api/clientMemberships/{id}", method = RequestMethod.PUT)
+    public void editClientMembership(@PathVariable Long id, @RequestParam Long clientId, @RequestParam Long membershipId) {
+        ClientMembership clientMembership = clientMembershipRepo.findById(id).orElseThrow(RuntimeException::new);
+        Client client = clientRepo.findById(clientId).orElseThrow(RuntimeException::new);
+        SportComplexMembership sportComplexMembership = sportComplexMembershipRepo.findById(membershipId).orElseThrow(RuntimeException::new);
+        clientMembership.setClient(client);
+        clientMembership.setSportComplexMembership(sportComplexMembership);
+        clientMembershipRepo.save(clientMembership);
+    }
+
+}
