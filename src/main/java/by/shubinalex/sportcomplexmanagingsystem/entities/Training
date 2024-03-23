@@ -26,8 +26,15 @@ public class Training {
     private ComplexFacility complexFacility;
 
     @Builder.Default
-    @OneToMany(mappedBy = "training")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "training")
     @JsonIgnore
+    @ToString.Exclude
     private List<ClientTraining> clientTrainings = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "training")
+    @JsonIgnore
+    @ToString.Exclude
+    private List<TrainingMembership> trainingMemberships = new ArrayList<>();
 
 }
