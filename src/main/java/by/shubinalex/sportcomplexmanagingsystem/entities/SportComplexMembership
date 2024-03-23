@@ -27,13 +27,13 @@ public class SportComplexMembership {
     private int completeVisitsAmount;
 
     @Builder.Default
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sportComplexMembership", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sportComplexMembership")
     @JsonIgnore
     @ToString.Exclude
     private List<TrainingMembership> trainingMemberships = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sportComplexMembership", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sportComplexMembership")
     @JsonIgnore
     @ToString.Exclude
     private List<ClientMembership> clientMemberships = new ArrayList<>();
