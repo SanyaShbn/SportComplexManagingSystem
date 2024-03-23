@@ -16,11 +16,11 @@ public class ClientMembership {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long idClientMembership;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "membership_id")
     private SportComplexMembership sportComplexMembership;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
     private Client client;
 
@@ -33,4 +33,6 @@ public class ClientMembership {
         this.client = client;
         client.getClientMemberships().add(this);
     }
+
 }
+
