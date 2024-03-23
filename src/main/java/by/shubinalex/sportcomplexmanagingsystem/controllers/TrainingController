@@ -1,9 +1,7 @@
 package by.shubinalex.sportcomplexmanagingsystem.Controllers;
 
-import by.shubinalex.sportcomplexmanagingsystem.entities.ComplexFacility;
-import by.shubinalex.sportcomplexmanagingsystem.entities.Training;
-import by.shubinalex.sportcomplexmanagingsystem.repo.ComplexFacilityRepo;
-import by.shubinalex.sportcomplexmanagingsystem.repo.TrainingRepo;
+import by.shubinalex.sportcomplexmanagingsystem.entities.*;
+import by.shubinalex.sportcomplexmanagingsystem.repo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +18,13 @@ public class TrainingController {
     @Autowired
     private ComplexFacilityRepo complexFacilityRepo;
 
-    @RequestMapping(value = "/trainings", method = RequestMethod.GET)
+    @Autowired
+    private ClientTrainingRepo clientTrainingRepo;
+
+    @Autowired
+    private TrainingMembershipRepo trainingMembershipRepo;
+
+    @RequestMapping(value = "/api/view_trainings", method = RequestMethod.GET)
     public Iterable<Training> getTrainings() {
         return trainingRepo.findAll();
     }
@@ -67,6 +71,15 @@ public class TrainingController {
         Optional<ComplexFacility> currentComplexFacility = Optional.ofNullable(training.get().getComplexFacility());
         Optional<ComplexFacility> updatedComplexFacility = complexFacilityRepo.findById(currentComplexFacility.get().getIdComplexFacility());
         updatedComplexFacility.get().setTrainingsAmount(updatedComplexFacility.get().getTrainingsAmount() - 1);
+        Training delTraining = trainingRepo.findById(id).orElseThrow(RuntimeException::new);
+        List<ClientTraining> clientTrainings = clientTrainingRepo.findByTraining(delTraining);
+        for(ClientTraining delClientTraining : clientTrainings){
+            clientTrainingRepo.deleteById(delClientTraining.getIdClientTraining());
+        }
+        List<TrainingMembership> trainingMemberships = trainingMembershipRepo.findByTraining(delTraining);
+        for(TrainingMembership delTrainingMembership : trainingMemberships){
+            trainingMembershipRepo.deleteById(delTrainingMembership.getIdTrainingMembership());
+        }
         trainingRepo.deleteById(id);
         return ResponseEntity.ok().build();
     }
