@@ -28,7 +28,9 @@ public class WebConfig {
         config.setAllowedHeaders(Arrays.asList(
                 HttpHeaders.AUTHORIZATION,
                 HttpHeaders.CONTENT_TYPE,
-                HttpHeaders.ACCEPT));
+                HttpHeaders.ACCEPT,
+                HttpHeaders.ORIGIN));
+        config.addAllowedHeader("body");
         config.setAllowedMethods(Arrays.asList(
                 HttpMethod.GET.name(),
                 HttpMethod.POST.name(),
