@@ -2,10 +2,7 @@ package by.shubinalex.sportcomplexmanagingsystem.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +24,14 @@ public class Client {
     private String email;
 
     @Builder.Default
-    @OneToMany(mappedBy = "client")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "client")
     @JsonIgnore
+    @ToString.Exclude
     private List<ClientTraining> clientTrainings = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "client")
+    @JsonIgnore
+    @ToString.Exclude
+    private List<ClientMembership> clientMemberships = new ArrayList<>();
 }
