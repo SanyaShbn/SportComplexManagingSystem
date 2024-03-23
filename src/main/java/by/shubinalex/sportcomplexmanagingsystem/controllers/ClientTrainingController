@@ -42,4 +42,15 @@ public class ClientTrainingController {
         clientTraining.setClient(client);
         clientTrainingRepo.save(clientTraining);
     }
+
+    @RequestMapping(value = "/api/deleteClientTrainings", method = RequestMethod.DELETE)
+    public void deleteClientTraining(@RequestParam Long id) {
+        ClientTraining clientTraining = clientTrainingRepo.findById(id).orElseThrow(RuntimeException::new);
+        Optional<Training> training = trainingRepo.findById(clientTraining.getTraining().getIdTraining());
+        Optional<Client> client = clientRepo.findById(clientTraining.getClient().getIdClient());
+        training.get().getClientTrainings().remove(clientTraining);
+        client.get().getClientTrainings().remove(clientTraining);
+
+        clientTrainingRepo.delete(clientTraining);
+    }
 }
