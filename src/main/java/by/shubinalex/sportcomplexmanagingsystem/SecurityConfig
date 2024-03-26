@@ -22,6 +22,10 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import static by.shubinalex.sportcomplexmanagingsystem.entities.Role.ADMIN;
+import static by.shubinalex.sportcomplexmanagingsystem.entities.Role.MANAGER;
+
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig{
@@ -49,8 +53,7 @@ public class SecurityConfig{
 //        }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http.cors(AbstractHttpConfigurer::disable).
-//                csrf(CsrfConfigurer:: disable)
+//        http.csrf(CsrfConfigurer:: disable)
 //                .authorizeHttpRequests((authz) -> authz
 //                        .anyRequest().permitAll());
             http.csrf(CsrfConfigurer:: disable)
@@ -59,12 +62,13 @@ public class SecurityConfig{
                     )
                     .authorizeHttpRequests((authz) -> authz
                             .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                            .requestMatchers("/serviceEmployees").hasRole(ADMIN.getAuthority())
                             .anyRequest().authenticated()
-
                     )
                     .exceptionHandling((ex) -> ex
                             .authenticationEntryPoint(exceptionHandler)
                     ).addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
