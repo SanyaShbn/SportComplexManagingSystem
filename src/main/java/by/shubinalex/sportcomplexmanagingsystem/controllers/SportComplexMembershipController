@@ -36,6 +36,8 @@ public class SportComplexMembershipController {
         }
         List<TrainingMembership> trainingMemberships = trainingMembershipRepo.findBySportComplexMembership(sportComplexMembership);
         for(TrainingMembership delTrainingMembership : trainingMemberships){
+            SportComplexMembership updatedSportComplexMembership = delTrainingMembership.getSportComplexMembership();
+            updatedSportComplexMembership.setCompleteVisitsAmount(updatedSportComplexMembership.getCompleteVisitsAmount() - delTrainingMembership.getVisitsAmount());
             trainingMembershipRepo.deleteById(delTrainingMembership.getIdTrainingMembership());
         }
         sportComplexMembershipRepo.delete(sportComplexMembership);
