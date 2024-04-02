@@ -50,7 +50,7 @@ public class TrainingMembershipController {
         }
         else{
             SportComplexMembership previous_membership = trainingMembership.getSportComplexMembership();
-            previous_membership.setCompleteVisitsAmount(previous_membership.getCompleteVisitsAmount() - visitsAmount);
+            previous_membership.setCompleteVisitsAmount(previous_membership.getCompleteVisitsAmount() - trainingMembership.getVisitsAmount());
             sportComplexMembership.setCompleteVisitsAmount(sportComplexMembership.getCompleteVisitsAmount() + visitsAmount);
         }
         trainingMembership.setTraining(training);
