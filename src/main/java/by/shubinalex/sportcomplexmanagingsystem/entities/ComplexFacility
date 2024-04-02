@@ -49,4 +49,8 @@ public class ComplexFacility {
         trainings.add(training);
         training.setComplexFacility(this);
     }
+
+ public ComplexFacility(int id) {
+        idComplexFacility = Long.parseLong(String.valueOf(id));
+    }
 }
