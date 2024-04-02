@@ -38,17 +38,24 @@ public class TrainingMembershipController {
     }
 
     @RequestMapping(value = "/api/trainingMemberships/{id}", method = RequestMethod.PUT)
-    public void editTrainingMembership(@RequestBody TrainingMembership updated_training_membership,
-        @PathVariable Long id, @RequestParam Long trainingId, @RequestParam Long membershipId) {
+    public void editTrainingMembership(@PathVariable Long id, @RequestParam Long trainingId,
+                                       @RequestParam Long membershipId, @RequestParam int visitsAmount) {
 
         TrainingMembership trainingMembership = trainingMembershipRepo.findById(id).orElseThrow(RuntimeException::new);
         Training training = trainingRepo.findById(trainingId).orElseThrow(RuntimeException::new);
         SportComplexMembership sportComplexMembership = sportComplexMembershipRepo.findById(membershipId).orElseThrow(RuntimeException::new);
+        if (trainingMembership.getSportComplexMembership() == sportComplexMembership){
         sportComplexMembership.setCompleteVisitsAmount(sportComplexMembership.getCompleteVisitsAmount()
-                - trainingMembership.getVisitsAmount() + updated_training_membership.getVisitsAmount());
+                - trainingMembership.getVisitsAmount() + visitsAmount);
+        }
+        else{
+            SportComplexMembership previous_membership = trainingMembership.getSportComplexMembership();
+            previous_membership.setCompleteVisitsAmount(previous_membership.getCompleteVisitsAmount() - visitsAmount);
+            sportComplexMembership.setCompleteVisitsAmount(sportComplexMembership.getCompleteVisitsAmount() + visitsAmount);
+        }
         trainingMembership.setTraining(training);
         trainingMembership.setSportComplexMembership(sportComplexMembership);
-        trainingMembership.setVisitsAmount(updated_training_membership.getVisitsAmount());
+        trainingMembership.setVisitsAmount(visitsAmount);
         trainingMembershipRepo.save(trainingMembership);
     }
 
