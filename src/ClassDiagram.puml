@@ -1,0 +1,335 @@
+@startuml
+package by.shubinalex.sportcomplexmanagingsystem {
+
+    left to right direction
+
+    package Controllers{
+    class AdminMainController {
+        +getAdminMain()
+    }
+
+    class ClientController {
+        -clientRepo: ClientRepo
+        -clientTrainingRepo: ClientTrainingRepo
+        -clientMembershipRepo: ClientMembershipRepo
+        +getClients(): Iterable<Client>
+        +deleteClient(id: Long)
+    }
+
+    class ClientMembershipController {
+        -clientMembershipRepo: ClientMembershipRepo
+        -clientRepo: ClientRepo
+        -sportComplexMembershipRepo: SportComplexMembershipRepo
+        +getClientMemberships(): Iterable<ClientMembership>
+        +saveClientMembership(membershipId: Long, clientId: Long)
+        +editClientMembership(id: Long, membershipId: Long, clientId: Long)
+        +deleteClientMembership(id: Long)
+    }
+
+    class ClientTrainingController {
+        -clientTrainingRepo: ClientTrainingRepo
+        -trainingRepo: TrainingRepo
+        -clientRepo: ClientRepo
+        +getClientTrainings(): Iterable<ClientTraining>
+        +saveClientTraining(trainingId: Long, clientId: Long)
+        +editClientTraining(id: Long, trainingId: Long, clientId: Long)
+        +deleteClientTraining(id: Long)
+    }
+
+    class ComplexFacilityController {
+        -complexFacilityRepo: ComplexFacilityRepo
+        +getComplexFacilities(): Iterable<ComplexFacility>
+    }
+
+    class LoginController {
+        -jwtService: JwtService
+        -authenticationManager: AuthenticationManager
+        -userRepo: UserRepo
+        +getToken(credentials: AccountCredentials): ResponseEntity<?>
+        +register(credentials: AccountCredentials): ResponseEntity<?>
+    }
+
+    class ServiceEmployeeController {
+        -serviceEmployeeRepo: ServiceEmployeeRepo
+        +getServiceEmployees(): Iterable<ServiceEmployee>
+    }
+
+    class SportComplexMembershipController {
+        -sportComplexMembershipRepo: SportComplexMembershipRepo
+        -trainingMembershipRepo: TrainingMembershipRepo
+        -clientMembershipRepo: ClientMembershipRepo
+        +getMemberships(): Iterable<SportComplexMembership>
+        +deleteSportComplexMembership(id: Long)
+        +updateSportComplexMembership(updatedSportComplexMembership: SportComplexMembership, id: Long): ResponseEntity
+    }
+
+    class TrainingController {
+         -complexFacilityRepo: ComplexFacilityRepo
+         -trainingRepo: TrainingRepo
+         -clientTrainingRepo: ClientTrainingRepo
+         -trainingMembershipRepo: TrainingMembershipRepo
+         +getTrainings(): Iterable<Training>
+         +deleteTraining(id: Long)
+         +updateTraining(updated_training: Training, id: Long, complexFacilityId: Long): ResponseEntity
+    }
+
+    class TrainingMembershipController {
+         -sportComplexMembershipRepo: SportComplexMembershipRepo
+         -trainingMembershipRepo: TrainingMembershipRepo
+         -trainingRepo: TrainingRepo
+         +getTrainingMemberships(): Iterable<TrainingMembership>
+         +editTrainingMembership(id: Long, trainingId: Long, membershipId: Long, visitsAmount: int)
+         +deleteTrainingMembership(id: Long)
+    }
+    }
+
+    package configs{
+    class WebConfig {
+          -{static} MAX_AGE: Long
+          -CORS_FILTER_ORDER: int
+          +getTrainings(): Iterable<Training>
+          +deleteTraining(id: Long)
+          +updateTraining(updated_training: Training, id: Long, complexFacilityId: Long): ResponseEntity
+        }
+    }
+
+    package entities{
+        class AccountCredentials {
+              -userLogin: String
+              -userPassword: String
+              -role: Role
+            }
+        class Client {
+              -idClient: Long
+              -firstName: String
+              -surName: String
+              -patrSurName: String
+              -phoneNumber: String
+              -email: String
+              -clientTrainings: List<ClientTraining>
+              -clientMemberships: List<ClientMembership>
+           }
+
+        class ClientMembership {
+              -idClientMembership: Long
+              -sportComplexMembership: SportComplexMembership
+              -client: Client
+           }
+
+        class ClientTraining {
+              -idClientTraining: Long
+              -status: String
+              -client: Client
+              -training: Training
+           }
+
+        class ComplexFacility {
+              -idComplexFacility: long
+              -facilityType: String
+              -trainingsAmount: int
+              -cleaningServiceTime: LocalDateTime
+              -trainings: List<Training>
+              -employeeFacilities: List<EmployeeFacility>
+           }
+
+           class EmployeeFacility {
+              -idEmployeeFacility: Long
+              -serviceEmployee: ServiceEmployee
+              -complexFacility: ComplexFacility
+           }
+
+           enum Role {
+               ADMIN
+               MANAGER
+               MARKETER
+               ACCOUNTANT
+               COACH
+           }
+           class ServiceEmployee {
+                  -idServiceEmployee: long
+                  -firstName: String
+                  -surName: String
+                  -patrSurName: String
+                  -phoneNumber: String
+                  -birthDate: LocalDate
+                  -salary: double
+                  -additionalSalary: double
+                  -employeeFacilities: List<EmployeeFacility>
+           }
+
+           class SportComplexMembership {
+                  -idSportComplexMembership: long
+                  -name: String
+                  -durationDeadline: LocalDate
+                  -cost: Double
+                  -completeVisitsAmount: int
+                  -trainingMemberships: List<TrainingMembership>
+                  -clientMemberships: List<ClientMembership>
+           }
+
+           class Training {
+                  -idTraining: long
+                  -trainingDateTime: LocalDateTime
+                  -cost: Double
+                  -complexFacility: ComplexFacility
+                  -clientTrainings: List<ClientTraining>
+                  -trainingMemberships: List<TrainingMembership>
+           }
+
+           class TrainingMembership {
+                  -idTrainingMembership: Long
+                  -visitsAmount: int
+                  -sportComplexMembership: SportComplexMembership
+                  -training: Training
+           }
+
+           class User {
+                  -userId: Long
+                  -userLogin: String
+                  -userPassword: String
+                  -firstName: String
+                  -surName: String
+                  -patrSurName: String
+                  -role: Role
+                  -post: String
+                  -phoneNumber: String
+                  -birthDate: LocalDate
+                  -education: String
+                  -salary: double
+                  -additionalSalary: double
+                  -workExperience: Integer
+           }
+
+    Client --|> ClientTraining : clientTrainings
+    Client --|> ClientMembership : clientMemberships
+
+    ClientMembership --o SportComplexMembership : sportComplexMembership
+    ClientMembership --o Client : client
+
+    ClientTraining --o Client : client
+    ClientTraining --o Training : training
+
+    ComplexFacility --o Training : trainings
+    ComplexFacility --o EmployeeFacility : employeeFacilities
+
+    EmployeeFacility --o ServiceEmployee : serviceEmployee
+    EmployeeFacility --o ComplexFacility : complexFacility
+
+    ServiceEmployee --|> EmployeeFacility : employeeFacilities
+
+    SportComplexMembership --|> TrainingMembership : trainingMemberships
+    SportComplexMembership --|> ClientMembership : clientMemberships
+
+    Training --|> ClientTraining : clientTrainings
+    Training --|> TrainingMembership : trainingMemberships
+    }
+
+package by.shubinalex.sportcomplexmanagingsystem.repo {
+    interface ClientMembershipRepo <<RepositoryRestResource>> {
+        List<ClientMembership> findByIdClientMembership(@Param("id") Long idClientMembership);
+        List<ClientMembership> findByClient(Client client);
+        List<ClientMembership> findBySportComplexMembership(SportComplexMembership sportComplexMembership);
+    }
+
+    interface ClientRepo <<RepositoryRestResource>> {
+        List<Client> findByIdClient(@Param("id") Long idClient);
+    }
+
+    interface ClientTrainingRepo <<RepositoryRestResource>> {
+        List<ClientTraining> findByIdClientTraining(@Param("id") Long idClientTraining);
+        List<ClientTraining> findByClient(Client client);
+        List<ClientTraining> findByTraining(Training training);
+    }
+
+    interface ComplexFacilityRepo <<RepositoryRestResource>> {
+        List<ComplexFacility> findByIdComplexFacility(@Param("id") Long idComplexFacility);
+    }
+
+    interface ServiceEmployeeRepo <<RepositoryRestResource>> {
+        List<ServiceEmployee> findByIdServiceEmployee(@Param("id") Long idServiceEmployee);
+    }
+
+    interface SportComplexMembershipRepo <<RepositoryRestResource>> {
+        List<SportComplexMembership> findByIdSportComplexMembership(@Param("id") Long idSportComplexMembership);
+    }
+
+    interface TrainingMembershipRepo <<RepositoryRestResource>> {
+        List<TrainingMembership> findByIdTrainingMembership(@Param("id") Long idTrainingMembership);
+        List<TrainingMembership> findByTraining(Training training);
+        List<TrainingMembership> findBySportComplexMembership(SportComplexMembership sportComplexMembership);
+    }
+
+    interface TrainingRepo <<RepositoryRestResource>> {
+        List<Training> findByIdTraining(@Param("id") Long idTraining);
+    }
+
+    interface UserRepo <<RepositoryRestResource(exported = false)>> {
+        Optional<User> findByUserLogin(String userLogin);
+    }
+}
+
+package by.shubinalex.sportcomplexmanagingsystem.service {
+    class ClientService <<Service>> {
+        +generateClients(int count)
+        +generateName(String gender)
+        +generateSurname(String gender)
+        +generatePatrSurname(String gender)
+        +generatePhoneNumber()
+        +generateEmail(String name, String surname, String domain)
+        +generateClients()
+    }
+
+    class JwtService {
+        static final long EXPIRATIONTIME = 86400000
+        static final String PREFIX = "Bearer"
+        static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256)
+        +getToken(String userLogin, List<String> roles)
+        +getAuthUser(HttpServletRequest request)
+    }
+
+    class UserDetailsServiceImpl <<Service>> {
+        +loadUserByUsername(String userLogin)
+    }
+
+    ClientService --> ClientRepo
+    UserDetailsServiceImpl --> UserRepo
+    JwtService --> HttpServletRequest
+}
+package by.shubinalex.sportcomplexmanagingsystem {
+    class AuthenticationFilter {
+        - jwtService: JwtService
+        + doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain): void
+    }
+
+    class AuthEntryPoint {
+        + commence(request: HttpServletRequest, response: HttpServletResponse, authException: AuthenticationException): void
+    }
+
+    class SecurityConfig {
+        - userDetailsService: UserDetailsServiceImpl
+        - authenticationFilter: AuthenticationFilter
+        - exceptionHandler: AuthEntryPoint
+        + filterChain(http: HttpSecurity): SecurityFilterChain
+        + corsConfigurationSource(): CorsConfigurationSource
+        + configureGlobal(auth: AuthenticationManagerBuilder): void
+        + authenticationManager(userDetailsService: UserDetailsServiceImpl): AuthenticationManager
+    }
+
+    class SportComplexManagingSystemApplication {
+        + main(args: String[]): void
+    }
+
+    AuthenticationFilter --|> OncePerRequestFilter
+    AuthEntryPoint --|> AuthenticationEntryPoint
+    SecurityConfig --> UserDetailsServiceImpl
+    SecurityConfig --> AuthenticationFilter
+    SecurityConfig --> AuthEntryPoint
+    SecurityConfig --> AuthenticationManagerBuilder
+    SecurityConfig --> UserDetailsServiceImpl
+
+}
+
+    SportComplexManagingSystemApplication --> SecurityConfig
+}
+
+@enduml
