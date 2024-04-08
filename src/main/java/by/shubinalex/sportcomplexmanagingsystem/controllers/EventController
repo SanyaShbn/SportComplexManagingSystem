@@ -1,0 +1,24 @@
+package by.shubinalex.sportcomplexmanagingsystem.Controllers;
+
+import by.shubinalex.sportcomplexmanagingsystem.entities.Event;
+import by.shubinalex.sportcomplexmanagingsystem.entities.Training;
+import by.shubinalex.sportcomplexmanagingsystem.repo.EventRepo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+public class EventController {
+
+    @Autowired
+    private EventRepo eventRepo;
+
+
+    @RequestMapping(value = "/events", method = RequestMethod.GET)
+    public Iterable<Event> getAllEvents() {
+        return eventRepo.findAll();
+    }
+
+
+}
