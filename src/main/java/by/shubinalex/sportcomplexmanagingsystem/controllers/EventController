@@ -4,9 +4,12 @@ import by.shubinalex.sportcomplexmanagingsystem.entities.Event;
 import by.shubinalex.sportcomplexmanagingsystem.entities.Training;
 import by.shubinalex.sportcomplexmanagingsystem.repo.EventRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class EventController {
@@ -14,11 +17,39 @@ public class EventController {
     @Autowired
     private EventRepo eventRepo;
 
-
-    @RequestMapping(value = "/events", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/events", method = RequestMethod.GET)
     public Iterable<Event> getAllEvents() {
         return eventRepo.findAll();
     }
 
+    @RequestMapping(value = "/api/events", method = RequestMethod.POST)
+    public ResponseEntity<Event> addEvents(@RequestBody Event event) {
+        eventRepo.save(event);
+        return new ResponseEntity<>(eventRepo.save(event), HttpStatus.OK);
+    }
+    @RequestMapping(value = "/api/events/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<Event> updateEvent(@PathVariable("id") long id, @RequestBody Event eventDetails) {
+        Optional<Event> eventData = eventRepo.findById(id);
+
+        if (eventData.isPresent()) {
+            Event updated_event = eventData.get();
+            updated_event.setText(eventDetails.getText());
+            updated_event.setStart_date(eventDetails.getStart_date());
+            updated_event.setEnd_date(eventDetails.getEnd_date());
+            return new ResponseEntity<>(eventRepo.save(updated_event), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(value = "/api/events/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<HttpStatus> deleteEvent(@PathVariable("id") long id) {
+        try {
+            eventRepo.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }
