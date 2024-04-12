@@ -19,5 +19,9 @@ public class Event {
     private String start_date;
     private String end_date;
     private String text;
+    private String rec_type;
+    private Long event_length;
+    private int eventPid;
+    private String data_type;
 
 }
