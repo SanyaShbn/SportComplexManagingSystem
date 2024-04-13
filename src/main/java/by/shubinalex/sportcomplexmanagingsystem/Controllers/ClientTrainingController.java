@@ -1,0 +1,56 @@
+package by.shubinalex.sportcomplexmanagingsystem.Controllers;
+
+import by.shubinalex.sportcomplexmanagingsystem.entities.*;
+import by.shubinalex.sportcomplexmanagingsystem.repo.*;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Optional;
+
+
+@RestController
+public class ClientTrainingController {
+    @Autowired
+    private ClientTrainingRepo clientTrainingRepo;
+    @Autowired
+    private TrainingRepo trainingRepo;
+    @Autowired
+    private ClientRepo clientRepo;
+
+    @RequestMapping( value = "/client_trainings", method = RequestMethod.GET)
+    public Iterable<ClientTraining> getClientTrainings() {
+        return clientTrainingRepo.findAll();
+    }
+
+    @RequestMapping(value = "/api/save_client_training", method = RequestMethod.POST)
+    public void saveClientTraining(@RequestParam Long trainingId, @RequestParam Long clientId) {
+        ClientTraining clientTraining = new ClientTraining();
+        Training training = trainingRepo.findById(trainingId).orElseThrow(RuntimeException::new);
+        Client client = clientRepo.findById(clientId).orElseThrow(RuntimeException::new);
+        clientTraining.setTraining(training);
+        clientTraining.setClient(client);
+        clientTraining.setStatus("запланирована");
+        clientTrainingRepo.save(clientTraining);
+    }
+
+    @RequestMapping(value = "/api/clientTrainings/{id}", method = RequestMethod.PUT)
+    public void editClientTraining(@PathVariable Long id, @RequestParam Long trainingId, @RequestParam Long clientId) {
+        ClientTraining clientTraining = clientTrainingRepo.findById(id).orElseThrow(RuntimeException::new);
+        Training training = trainingRepo.findById(trainingId).orElseThrow(RuntimeException::new);
+        Client client = clientRepo.findById(clientId).orElseThrow(RuntimeException::new);
+        clientTraining.setTraining(training);
+        clientTraining.setClient(client);
+        clientTrainingRepo.save(clientTraining);
+    }
+
+    @RequestMapping(value = "/api/deleteClientTrainings", method = RequestMethod.DELETE)
+    public void deleteClientTraining(@RequestParam Long id) {
+        ClientTraining clientTraining = clientTrainingRepo.findById(id).orElseThrow(RuntimeException::new);
+        Optional<Training> training = trainingRepo.findById(clientTraining.getTraining().getIdTraining());
+        Optional<Client> client = clientRepo.findById(clientTraining.getClient().getIdClient());
+        training.get().getClientTrainings().remove(clientTraining);
+        client.get().getClientTrainings().remove(clientTraining);
+
+        clientTrainingRepo.delete(clientTraining);
+    }
+}

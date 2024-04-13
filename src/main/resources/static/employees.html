@@ -27,7 +27,14 @@
     <th scope="col"></th>
     <th scope="col"></th>
   </tr>
-  <form action="employee" method="POST">
+  {{#users}}
+  <div>
+    <b>{{id}}</b>
+    <span>{{text}}</span>
+    <i>{{tag}}</i>
+  </div>
+  {{/users}}
+  <form method="POST">
     <tr>
       <td><input type="text" name="id" size="3" value=""
                  title="<%=emp.getIdEmployee()%>" readonly></td>

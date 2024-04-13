@@ -1,0 +1,44 @@
+package by.shubinalex.sportcomplexmanagingsystem.Controllers;
+
+import by.shubinalex.sportcomplexmanagingsystem.entities.*;
+import by.shubinalex.sportcomplexmanagingsystem.repo.ClientMembershipRepo;
+import by.shubinalex.sportcomplexmanagingsystem.repo.ClientRepo;
+import by.shubinalex.sportcomplexmanagingsystem.repo.ClientTrainingRepo;
+import by.shubinalex.sportcomplexmanagingsystem.repo.ComplexFacilityRepo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+public class ClientController {
+    @Autowired
+    private ClientRepo clientRepo;
+
+    @Autowired
+    private ClientTrainingRepo clientTrainingRepo;
+
+    @Autowired
+    private ClientMembershipRepo clientMembershipRepo;
+    @RequestMapping(value = "/api/view_clients", method = RequestMethod.GET)
+    public Iterable<Client> getClients() {
+        return clientRepo.findAll();
+    }
+
+    @RequestMapping(value = "/api/clients/{id}", method = RequestMethod.DELETE)
+    public void deleteClient(@PathVariable Long id) {
+
+        Client client = clientRepo.findById(id).orElseThrow(RuntimeException::new);
+        List<ClientTraining> clientTrainings = clientTrainingRepo.findByClient(client);
+        for(ClientTraining delClientTraining : clientTrainings){
+            clientTrainingRepo.deleteById(delClientTraining.getIdClientTraining());
+        }
+        List<ClientMembership> clientMemberships = clientMembershipRepo.findByClient(client);
+        for(ClientMembership delClientMembership : clientMemberships){
+            clientMembershipRepo.deleteById(delClientMembership.getIdClientMembership());
+        }
+        clientRepo.delete(client);
+    }
+}

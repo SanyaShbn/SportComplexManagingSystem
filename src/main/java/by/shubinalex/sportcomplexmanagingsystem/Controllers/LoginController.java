@@ -1,0 +1,79 @@
+package by.shubinalex.sportcomplexmanagingsystem.Controllers;
+
+import by.shubinalex.sportcomplexmanagingsystem.entities.AccountCredentials;
+import by.shubinalex.sportcomplexmanagingsystem.entities.Role;
+import by.shubinalex.sportcomplexmanagingsystem.entities.User;
+import by.shubinalex.sportcomplexmanagingsystem.repo.UserRepo;
+import by.shubinalex.sportcomplexmanagingsystem.service.JwtService;
+import jakarta.annotation.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
+public class LoginController {
+    @Autowired
+    private JwtService jwtService;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    private UserRepo userRepo;
+
+    @RequestMapping(value="/login", method = RequestMethod.POST)
+    public ResponseEntity<?> getToken(@RequestBody AccountCredentials credentials) {
+        UsernamePasswordAuthenticationToken creds =
+                new UsernamePasswordAuthenticationToken(
+                        credentials.getUserLogin(),
+                        credentials.getUserPassword());
+
+        Authentication auth = authenticationManager.authenticate(creds);
+
+        List<Role> authorities = auth.getAuthorities().stream()
+                .map(authority -> Role.valueOf(authority.getAuthority().substring(5, authority.getAuthority().length())))
+                .collect(Collectors.toList());
+
+        List<String> roles = authorities.stream()
+                .map(Role::getAuthority)
+                .collect(Collectors.toList());
+
+        // Generate token
+        String jwts = jwtService.getToken(auth.getName(), roles);
+
+        // Build response with the generated token
+        return ResponseEntity.ok()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwts)
+                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Authorization")
+                .build();
+
+    }
+
+    @RequestMapping(value="/register", method = RequestMethod.POST)
+    public ResponseEntity<?> register(@RequestBody AccountCredentials credentials) {
+        User user = new User();
+        String password = new BCryptPasswordEncoder().encode(credentials.getUserPassword());
+        user.setUserLogin(credentials.getUserLogin());
+        user.setUserPassword(password);
+
+        if(userRepo.findByUserLogin(credentials.getUserLogin()).isEmpty()){
+            userRepo.save(user);
+            return ResponseEntity.ok().build();
+        }
+        else {
+            return ResponseEntity.badRequest().build();
+        }
+
+    }
+
+}
