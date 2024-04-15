@@ -23,5 +23,8 @@ public class Event {
     private Long event_length;
     private int eventPid;
     private String data_type;
+    private String coach;
+    private String clients;
+
 
 }

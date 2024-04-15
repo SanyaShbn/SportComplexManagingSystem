@@ -1,7 +1,10 @@
 package by.shubinalex.sportcomplexmanagingsystem.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -9,19 +12,16 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class User {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(nullable=false, updatable=false)
     private Long userId;
-
-    @Column(nullable=false, unique=true)
     private String userLogin;
-
-    @Column(nullable=false)
     private String userPassword;
-
     private String firstName;
     private String surName;
     private String patrSurName;
@@ -30,22 +30,17 @@ public class User {
 //    @CollectionTable(name="user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private Role role;
-
+    private String status;
     private String post;
+    @Column(nullable=false, unique=true)
+    private String email;
     private String phoneNumber;
     private LocalDate birthDate;
-    private String education;
     private double salary;
     private double additionalSalary;
-    private Integer workExperience;
-
-    public User() {
-    }
-
     public User(String userLogin, String userPassword, String firstName,
                 String surName, String patrSurName, Role role, String post, String phoneNumber,
-                LocalDate birthDate, String education, double salary, double additionalSalary,
-                Integer workExperience) {
+                LocalDate birthDate, double salary, double additionalSalary) {
         super();
         this.userLogin = userLogin;
         this.userPassword = userPassword;
@@ -56,10 +51,8 @@ public class User {
         this.post = post;
         this.phoneNumber = phoneNumber;
         this.birthDate = birthDate;
-        this.education = education;
         this.salary = salary;
         this.additionalSalary = additionalSalary;
-        this.workExperience = workExperience;
     }
 
 }

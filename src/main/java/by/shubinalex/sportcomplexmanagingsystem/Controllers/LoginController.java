@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -61,13 +62,15 @@ public class LoginController {
 
     @RequestMapping(value="/register", method = RequestMethod.POST)
     public ResponseEntity<?> register(@RequestBody AccountCredentials credentials) {
-        User user = new User();
+        Optional<User> user = userRepo.findByEmail(credentials.getUserLogin());
+        User registered_user = user.get();
         String password = new BCryptPasswordEncoder().encode(credentials.getUserPassword());
-        user.setUserLogin(credentials.getUserLogin());
-        user.setUserPassword(password);
+        registered_user.setUserLogin(credentials.getUserLogin());
+        registered_user.setUserPassword(password);
+        registered_user.setStatus("active");
 
         if(userRepo.findByUserLogin(credentials.getUserLogin()).isEmpty()){
-            userRepo.save(user);
+            userRepo.save(registered_user);
             return ResponseEntity.ok().build();
         }
         else {

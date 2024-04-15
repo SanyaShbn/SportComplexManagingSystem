@@ -38,22 +38,20 @@ public class EventController {
             eventRepo.deleteByEventPid(Math.toIntExact(eventDetails.getId()));
         }
 
-        if (eventData.isPresent()) {
-            Event updated_event = eventData.get();
-            updated_event.setText(eventDetails.getText());
-            updated_event.setStart_date(eventDetails.getStart_date());
-            updated_event.setEnd_date(eventDetails.getEnd_date());
-            updated_event.setRec_type(eventDetails.getRec_type());
-            updated_event.setEvent_length(eventDetails.getEvent_length());
-            if(eventDetails.getRec_type().isEmpty() && !eventData.get().getRec_type().isEmpty()){
-                updated_event.setEventPid(Math.toIntExact(eventData.get().getId()));
-            }else {
-                updated_event.setEventPid(eventDetails.getEventPid());
-            }
-            return new ResponseEntity<>(eventRepo.save(updated_event), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        Event updated_event = eventData.get();
+        updated_event.setText(eventDetails.getText());
+        updated_event.setStart_date(eventDetails.getStart_date());
+        updated_event.setEnd_date(eventDetails.getEnd_date());
+        updated_event.setRec_type(eventDetails.getRec_type());
+        updated_event.setEvent_length(eventDetails.getEvent_length());
+        updated_event.setCoach(eventDetails.getCoach());
+        updated_event.setClients(eventDetails.getClients());
+        if(eventDetails.getRec_type().isEmpty() && !eventData.get().getRec_type().isEmpty()){
+            updated_event.setEventPid(Math.toIntExact(eventData.get().getId()));
+        }else {
+            updated_event.setEventPid(eventDetails.getEventPid());
         }
+        return new ResponseEntity<>(eventRepo.save(updated_event), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/api/events/{id}", method = RequestMethod.DELETE)
