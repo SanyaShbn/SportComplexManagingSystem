@@ -16,10 +16,13 @@ import java.util.List;
 @ToString
 public class Training {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long idTraining;
-    private LocalDateTime trainingDateTime;
+    private String name;
     private Double cost;
+    private String type;
+    private int capacity;
+    private int clients_amount;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)

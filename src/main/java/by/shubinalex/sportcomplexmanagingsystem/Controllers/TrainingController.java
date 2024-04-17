@@ -91,7 +91,9 @@ public class TrainingController {
     public ResponseEntity updateTraining(@RequestBody Training updated_training, @PathVariable Long id, @RequestParam Long complexFacilityId) {
         Training current_training = trainingRepo.findById(id).orElseThrow(RuntimeException::new);
         current_training.setCost(updated_training.getCost());
-        current_training.setTrainingDateTime(updated_training.getTrainingDateTime());
+        current_training.setName(updated_training.getName());
+        current_training.setCapacity(updated_training.getCapacity());
+        current_training.setType(updated_training.getType());
 
         Optional<ComplexFacility> complexFacilityOptional = complexFacilityRepo.findById(complexFacilityId);
 

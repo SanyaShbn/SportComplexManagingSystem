@@ -44,8 +44,7 @@ public class EventController {
         updated_event.setEnd_date(eventDetails.getEnd_date());
         updated_event.setRec_type(eventDetails.getRec_type());
         updated_event.setEvent_length(eventDetails.getEvent_length());
-        updated_event.setCoach(eventDetails.getCoach());
-        updated_event.setClients(eventDetails.getClients());
+        updated_event.setDescription(eventDetails.getDescription());
         if(eventDetails.getRec_type().isEmpty() && !eventData.get().getRec_type().isEmpty()){
             updated_event.setEventPid(Math.toIntExact(eventData.get().getId()));
         }else {
