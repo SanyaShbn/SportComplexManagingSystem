@@ -20,10 +20,11 @@ public class JwtService {
     static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     // Generate JWT token
-    public String getToken(String userLogin, List<String> roles) {
+    public String getToken(String userLogin, List<String> roles, String status) {
         String token = Jwts.builder()
                 .setSubject(userLogin)
                 .claim("roles", roles)
+                .claim("status", status)
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATIONTIME))
                 .signWith(key)
                 .compact();
