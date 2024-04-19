@@ -18,65 +18,34 @@ public class EventController {
     private EventRepo eventRepo;
 
     @RequestMapping(value = "/api/events", method = RequestMethod.GET)
-    public Iterable<Event> getAllEvents() {
+    public @ResponseBody Iterable<Event> getAllEvents() {
         return eventRepo.findAll();
     }
 
     @RequestMapping(value = "/api/events", method = RequestMethod.POST)
-    public ResponseEntity<Event> addEvents(@RequestBody Event event) {
-        if(event.getRec_type().isEmpty()){
-            event.setEvent_length(0L);
-        }
+    public @ResponseBody String addNewEvent (@RequestBody Event event) {
         eventRepo.save(event);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return "Saved";
     }
+
     @RequestMapping(value = "/api/events/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Event> updateEvent(@PathVariable("id") long id, @RequestBody Event eventDetails) {
-        Optional<Event> eventData = eventRepo.findById(id);
-
-        if (!eventData.get().getRec_type().isEmpty()) {
-            eventRepo.deleteByEventPid(Math.toIntExact(eventDetails.getId()));
-        }
-
-        Event updated_event = eventData.get();
-        updated_event.setText(eventDetails.getText());
-        updated_event.setStart_date(eventDetails.getStart_date());
-        updated_event.setEnd_date(eventDetails.getEnd_date());
-        updated_event.setRec_type(eventDetails.getRec_type());
-        updated_event.setEvent_length(eventDetails.getEvent_length());
-        updated_event.setDescription(eventDetails.getDescription());
-        if(eventDetails.getRec_type().isEmpty() && !eventData.get().getRec_type().isEmpty()){
-            updated_event.setEventPid(Math.toIntExact(eventData.get().getId()));
-        }else {
-            updated_event.setEventPid(eventDetails.getEventPid());
-        }
-        return new ResponseEntity<>(eventRepo.save(updated_event), HttpStatus.OK);
+    public @ResponseBody String updateEvent(@PathVariable("id") Long id, @RequestBody Event eventDetails) {
+        Event event = eventRepo.findById(id).get();
+        event.setText(eventDetails.getText());
+        event.setStart_date(eventDetails.getStart_date());
+        event.setEnd_date(eventDetails.getEnd_date());
+        event.setRec_type(eventDetails.getRec_type());
+        event.setDescription(eventDetails.getDescription());
+        event.setData_type(eventDetails.getData_type());
+        event.setEvent_length(eventDetails.getEvent_length());
+        event.setEvent_pid(eventDetails.getEvent_pid());
+        eventRepo.save(event);
+        return "Updated";
     }
 
     @RequestMapping(value = "/api/events/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Event> deleteEvent(@PathVariable("id") long id) {
-        try {
-            Optional<Event> eventData = eventRepo.findById(id);
-            if(eventData.isPresent()) {
-                Event deleted_event = eventData.get();
-                if (!deleted_event.getRec_type().isEmpty()) {
-                    eventRepo.deleteByEventPid(Math.toIntExact(deleted_event.getId()));
-                    eventRepo.deleteById(id);
-                }
-                else if (deleted_event.getEventPid() != 0) {
-                    deleted_event.setRec_type(" ");
-                    return new ResponseEntity<>(eventRepo.save(deleted_event), HttpStatus.OK);
-                }else {
-                    eventRepo.deleteById(id);
-                }
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public @ResponseBody String deleteEvent(@PathVariable("id") Long id) {
+        eventRepo.deleteById(id);
+        return "Deleted";
     }
-
 }

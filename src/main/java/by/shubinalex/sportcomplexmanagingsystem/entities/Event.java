@@ -21,7 +21,7 @@ public class Event {
     private String text;
     private String rec_type;
     private Long event_length;
-    private int eventPid;
+    private int event_pid;
     private String data_type;
     private String description;
 

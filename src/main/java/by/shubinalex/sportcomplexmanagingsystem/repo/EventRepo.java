@@ -11,7 +11,5 @@ import java.util.List;
 
 @RepositoryRestResource
 public interface EventRepo extends CrudRepository<Event, Long> {
-    @Transactional
-    void deleteByEventPid(int event_pid);
 
 }

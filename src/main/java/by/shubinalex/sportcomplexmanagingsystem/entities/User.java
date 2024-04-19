@@ -34,6 +34,7 @@ public class User {
     private String post;
     @Column(nullable=false, unique=true)
     private String email;
+    @Column(unique = true)
     private String phoneNumber;
     private LocalDate birthDate;
     private double salary;
