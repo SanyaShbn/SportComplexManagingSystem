@@ -1,5 +1,7 @@
 package by.shubinalex.sportcomplexmanagingsystem.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -15,6 +19,8 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer",
+        "handler"})
 public class User {
 
     @Id
@@ -39,21 +45,34 @@ public class User {
     private LocalDate birthDate;
     private double salary;
     private double additionalSalary;
-    public User(String userLogin, String userPassword, String firstName,
-                String surName, String patrSurName, Role role, String post, String phoneNumber,
-                LocalDate birthDate, double salary, double additionalSalary) {
-        super();
-        this.userLogin = userLogin;
-        this.userPassword = userPassword;
-        this.firstName = firstName;
-        this.surName = surName;
-        this.patrSurName = patrSurName;
-        this.role = role;
-        this.post = post;
-        this.phoneNumber = phoneNumber;
-        this.birthDate = birthDate;
-        this.salary = salary;
-        this.additionalSalary = additionalSalary;
+
+    @Builder.Default
+    @JsonIgnore
+    @OneToMany(mappedBy = "coach", fetch=FetchType.LAZY)
+    private List<Training> trainings = new ArrayList<>();
+
+    public void addTraining(Training training){
+        trainings.add(training);
+        training.setCoach(this);
     }
+    public void removeTraining(Training training){
+        trainings.remove(training);
+    }
+//    public User(String userLogin, String userPassword, String firstName,
+//                String surName, String patrSurName, Role role, String post, String phoneNumber,
+//                LocalDate birthDate, double salary, double additionalSalary) {
+//        super();
+//        this.userLogin = userLogin;
+//        this.userPassword = userPassword;
+//        this.firstName = firstName;
+//        this.surName = surName;
+//        this.patrSurName = patrSurName;
+//        this.role = role;
+//        this.post = post;
+//        this.phoneNumber = phoneNumber;
+//        this.birthDate = birthDate;
+//        this.salary = salary;
+//        this.additionalSalary = additionalSalary;
+//    }
 
 }

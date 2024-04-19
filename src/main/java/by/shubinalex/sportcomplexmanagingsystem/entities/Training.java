@@ -28,6 +28,10 @@ public class Training {
     @ManyToOne(fetch = FetchType.LAZY)
     private ComplexFacility complexFacility;
 
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User coach;
+
     @Builder.Default
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "training")
     @JsonIgnore

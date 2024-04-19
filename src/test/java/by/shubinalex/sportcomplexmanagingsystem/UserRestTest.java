@@ -24,7 +24,6 @@ public class UserRestTest {
 
     @Test
     public void testAuthentication() throws Exception {
-        // Testing authentication with correct credentials
         this.mockMvc.perform(post("/login").content("{\"user_login\":\"admin\", \"user_password\":\"admin\"}").
                         header(HttpHeaders.CONTENT_TYPE, "application/json")).
                 andDo(print()).andExpect(status().isOk());

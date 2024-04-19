@@ -17,6 +17,9 @@ public class TrainingController {
     private TrainingRepo trainingRepo;
 
     @Autowired
+    private UserRepo userRepo;
+
+    @Autowired
     private ComplexFacilityRepo complexFacilityRepo;
 
     @Autowired
@@ -50,28 +53,40 @@ public class TrainingController {
 //        return ResponseEntity.ok().build();
 //    }
     @RequestMapping(value = "/api/save_trainings", method = RequestMethod.POST)
-    public void saveTrainingWithComplexFacility(@RequestBody Training training, @RequestParam Long complexFacilityId) {
+    public ResponseEntity saveTrainingWithComplexFacility(@RequestBody Training training, @RequestParam Long complexFacilityId,
+                                                @RequestParam Long userId) {
 
         Optional<ComplexFacility> complexFacilityOptional = complexFacilityRepo.findById(complexFacilityId);
+        Optional<User> user = userRepo.findById(userId);
 
-        if(complexFacilityOptional.isPresent()) {
+        if(complexFacilityOptional.isPresent() && user.isPresent()) {
             ComplexFacility complexFacility = complexFacilityOptional.get();
+            User coach = user.get();
 
             complexFacility.addTraining(training);
+            coach.addTraining(training);
             complexFacility.setTrainingsAmount(complexFacility.getTrainingsAmount() + 1);
-
             trainingRepo.save(training);
-        } else {
-//            Обработка ошибки
+            return ResponseEntity.ok().build();
+        }
+        else{
+            return ResponseEntity.badRequest().build();
         }
     }
 
     @RequestMapping(value = "/api/trainings/{id}", method = RequestMethod.DELETE)
     public ResponseEntity deleteTraining(@PathVariable Long id) {
         Optional<Training> training = trainingRepo.findById(id);
-        Optional<ComplexFacility> currentComplexFacility = Optional.ofNullable(training.get().getComplexFacility());
-        Optional<ComplexFacility> updatedComplexFacility = complexFacilityRepo.findById(currentComplexFacility.get().getIdComplexFacility());
-        updatedComplexFacility.get().setTrainingsAmount(updatedComplexFacility.get().getTrainingsAmount() - 1);
+        if(training.get().getComplexFacility() != null) {
+            Optional<ComplexFacility> updatedComplexFacility = complexFacilityRepo.findById(training.get().getComplexFacility().getIdComplexFacility());
+            updatedComplexFacility.get().setTrainingsAmount(updatedComplexFacility.get().getTrainingsAmount() - 1);
+            updatedComplexFacility.get().removeTraining(training.get());
+        }
+        if(training.get().getCoach() != null) {
+            Optional<User> coach = Optional.of(training.get().getCoach());
+            coach.get().removeTraining(training.get());
+        }
+
         Training delTraining = trainingRepo.findById(id).orElseThrow(RuntimeException::new);
         List<ClientTraining> clientTrainings = clientTrainingRepo.findByTraining(delTraining);
         for(ClientTraining delClientTraining : clientTrainings){
@@ -88,7 +103,8 @@ public class TrainingController {
     }
 
     @RequestMapping(value = "/api/trainings/{id}", method = RequestMethod.PUT)
-    public ResponseEntity updateTraining(@RequestBody Training updated_training, @PathVariable Long id, @RequestParam Long complexFacilityId) {
+    public ResponseEntity updateTraining(@RequestBody Training updated_training, @PathVariable Long id, @RequestParam Long complexFacilityId,
+                                         @RequestParam Long userId) {
         Training current_training = trainingRepo.findById(id).orElseThrow(RuntimeException::new);
         current_training.setCost(updated_training.getCost());
         current_training.setName(updated_training.getName());
@@ -96,23 +112,26 @@ public class TrainingController {
         current_training.setType(updated_training.getType());
 
         Optional<ComplexFacility> complexFacilityOptional = complexFacilityRepo.findById(complexFacilityId);
+        Optional<User> user = userRepo.findById(userId);
 
-        if(complexFacilityOptional.isPresent()) {
+        if(complexFacilityOptional.isPresent() && user.isPresent()) {
             ComplexFacility complexFacility = complexFacilityOptional.get();
+            User coach = user.get();
 
             Optional<ComplexFacility> updatedPreviousComplexFacility = complexFacilityRepo.findById(current_training.getComplexFacility().getIdComplexFacility());
+            Optional<User> updatedPreviousCoach = userRepo.findById(current_training.getCoach().getUserId());
             updatedPreviousComplexFacility.get().setTrainingsAmount(updatedPreviousComplexFacility.get().getTrainingsAmount() - 1);
+            updatedPreviousComplexFacility.get().removeTraining(current_training);
+            updatedPreviousCoach.get().removeTraining(current_training);
 
             complexFacility.addTraining(current_training);
+            coach.addTraining(current_training);
             complexFacility.setTrainingsAmount(complexFacility.getTrainingsAmount() + 1);
-
 
             trainingRepo.save(current_training);
         } else {
-            //            Обработка ошибки
             return ResponseEntity.badRequest().build();
         }
-
 
         return ResponseEntity.ok().build();
     }

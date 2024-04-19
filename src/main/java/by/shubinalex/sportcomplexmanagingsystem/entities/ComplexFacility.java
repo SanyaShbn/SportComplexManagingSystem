@@ -29,7 +29,7 @@ public class ComplexFacility {
 
     @Builder.Default
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "complexFacility", fetch=FetchType.LAZY)
+    @OneToMany(mappedBy = "complexFacility", fetch=FetchType.LAZY)
     private List<Training> trainings = new ArrayList<>();
 
     @Builder.Default
@@ -42,7 +42,6 @@ public class ComplexFacility {
         this.facilityType = facilityType;
         this.trainingsAmount = trainingsAmount;
         this.cleaningServiceTime = cleaningServiceTime;
-
     }
 
     public void addTraining(Training training){
@@ -50,7 +49,8 @@ public class ComplexFacility {
         training.setComplexFacility(this);
     }
 
-    public ComplexFacility(int id) {
-        idComplexFacility = Long.parseLong(String.valueOf(id));
+    public void removeTraining(Training training){
+        trainings.remove(training);
     }
+
 }
