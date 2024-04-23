@@ -60,7 +60,7 @@ public class SportComplexManagingSystemApplication implements CommandLineRunner 
 //        }
 
 
-//
+
 //        userRepo.save(new User("admin@gmail.com",
 //                "$2a$10$8cjz47bjbR4Mn8GMg9IZx.vyjhLXR/SKKMSZ9.mP9vpMu0ssKi8GW",
 //                "Иван", "Смирнов", "Фёдорович", Role.ADMIN,

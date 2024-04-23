@@ -29,6 +29,10 @@ public class UserController {
         return userRepo.findByRole(Role.valueOf(Role.COACH.getAuthority()));
     }
 
+    @RequestMapping(value = "/api/user_profile",method = RequestMethod.GET)
+    public Optional<User> getUser(@RequestParam String userLogin) {
+        return userRepo.findByUserLogin(userLogin);
+    }
     @RequestMapping(value = "/api/delete_coach",method = RequestMethod.DELETE)
     public void deleteCoach(@RequestParam Long coach_id) {
         User deleting_coach = userRepo.findById(coach_id).get();

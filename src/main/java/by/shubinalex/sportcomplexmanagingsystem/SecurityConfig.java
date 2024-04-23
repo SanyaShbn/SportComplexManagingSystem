@@ -1,6 +1,5 @@
 package by.shubinalex.sportcomplexmanagingsystem;
 import java.util.Arrays;
-import java.util.List;
 
 import by.shubinalex.sportcomplexmanagingsystem.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
@@ -22,8 +20,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import static by.shubinalex.sportcomplexmanagingsystem.entities.Role.ADMIN;
 
 
 @Configuration
@@ -38,7 +34,7 @@ public class SecurityConfig{
     @Autowired
     private AuthEntryPoint exceptionHandler;
 
-//        @Override
+    //        @Override
 //        protected void configure(HttpSecurity http) throws Exception {
 //            http.csrf().disable().cors().and()
 //                    .sessionManagement()
@@ -54,21 +50,21 @@ public class SecurityConfig{
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(CsrfConfigurer:: disable)
-                .authorizeHttpRequests((authz) -> authz
-                        .anyRequest().permitAll());
+//        http.csrf(CsrfConfigurer:: disable)
+//                .authorizeHttpRequests((authz) -> authz
+//                        .anyRequest().permitAll());
 
-//            http.csrf(CsrfConfigurer:: disable)
-//                    .sessionManagement((session) -> session
-//                            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                    )
-//                    .authorizeHttpRequests((authz) -> authz
-//                            .requestMatchers(HttpMethod.POST, "/login", "/register").permitAll()
-//                            .anyRequest().authenticated()
-//                    )
-//                    .exceptionHandling((ex) -> ex
-//                            .authenticationEntryPoint(exceptionHandler)
-//                    ).addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.csrf(CsrfConfigurer:: disable)
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authorizeHttpRequests((authz) -> authz
+                        .requestMatchers(HttpMethod.POST, "/login", "/register").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .exceptionHandling((ex) -> ex
+                        .authenticationEntryPoint(exceptionHandler)
+                ).addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -94,7 +90,7 @@ public class SecurityConfig{
                 .passwordEncoder(new BCryptPasswordEncoder());
     }
 
-//        @Bean
+    //        @Bean
 //        public AuthenticationManager getAuthenticationManager() throws
 //                Exception {
 //            return authenticationManager();

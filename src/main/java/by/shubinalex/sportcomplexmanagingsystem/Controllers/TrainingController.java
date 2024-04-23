@@ -20,6 +20,9 @@ public class TrainingController {
     private UserRepo userRepo;
 
     @Autowired
+    private EventRepo eventRepo;
+
+    @Autowired
     private ComplexFacilityRepo complexFacilityRepo;
 
     @Autowired
@@ -32,26 +35,7 @@ public class TrainingController {
     public Iterable<Training> getTrainings() {
         return trainingRepo.findAll();
     }
-//
-//    @GetMapping("/{id}")
-//    public Training getTraining(@PathVariable Long idTraining) {
-//        return trainingRepo.findById(idTraining).orElseThrow(RuntimeException::new);
-//    }
-//    @PutMapping("/{id}")
-//    public ResponseEntity updateTraining(@PathVariable Long idTraining, @RequestBody Training training) {
-//        Training currentTraining = trainingRepo.findById(idTraining).orElseThrow(RuntimeException::new);
-//        currentTraining.setTrainingDateTime(training.getTrainingDateTime());
-//        currentTraining .setCost(training.getCost());
-//        currentTraining  = trainingRepo.save(training);
-//
-//        return ResponseEntity.ok(currentTraining);
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity deleteTraining(@PathVariable Long idTraining) {
-//        trainingRepo.deleteById( idTraining);
-//        return ResponseEntity.ok().build();
-//    }
+
     @RequestMapping(value = "/api/save_trainings", method = RequestMethod.POST)
     public ResponseEntity saveTrainingWithComplexFacility(@RequestBody Training training, @RequestParam Long complexFacilityId,
                                                 @RequestParam Long userId) {
@@ -98,6 +82,8 @@ public class TrainingController {
             sportComplexMembership.setCompleteVisitsAmount(sportComplexMembership.getCompleteVisitsAmount() - delTrainingMembership.getVisitsAmount());
             trainingMembershipRepo.deleteById(delTrainingMembership.getIdTrainingMembership());
         }
+        List<Event> events = eventRepo.findByText("Тренировка №" + training.get().getIdTraining());
+        eventRepo.deleteAll(events);
         trainingRepo.deleteById(id);
         return ResponseEntity.ok().build();
     }
@@ -110,26 +96,21 @@ public class TrainingController {
         current_training.setName(updated_training.getName());
         current_training.setCapacity(updated_training.getCapacity());
         current_training.setType(updated_training.getType());
+        try{
+        ComplexFacility complexFacility = complexFacilityRepo.findById(complexFacilityId).orElseThrow(RuntimeException::new);;
+        User coach = userRepo.findById(userId).orElseThrow(RuntimeException::new);
 
-        Optional<ComplexFacility> complexFacilityOptional = complexFacilityRepo.findById(complexFacilityId);
-        Optional<User> user = userRepo.findById(userId);
+        Optional<ComplexFacility> updatedPreviousComplexFacility = complexFacilityRepo.findById(current_training.getComplexFacility().getIdComplexFacility());
+        Optional<User> updatedPreviousCoach = userRepo.findById(current_training.getCoach().getUserId());
+        updatedPreviousComplexFacility.get().setTrainingsAmount(updatedPreviousComplexFacility.get().getTrainingsAmount() - 1);
+        updatedPreviousComplexFacility.get().removeTraining(current_training);
+        updatedPreviousCoach.get().removeTraining(current_training);
 
-        if(complexFacilityOptional.isPresent() && user.isPresent()) {
-            ComplexFacility complexFacility = complexFacilityOptional.get();
-            User coach = user.get();
-
-            Optional<ComplexFacility> updatedPreviousComplexFacility = complexFacilityRepo.findById(current_training.getComplexFacility().getIdComplexFacility());
-            Optional<User> updatedPreviousCoach = userRepo.findById(current_training.getCoach().getUserId());
-            updatedPreviousComplexFacility.get().setTrainingsAmount(updatedPreviousComplexFacility.get().getTrainingsAmount() - 1);
-            updatedPreviousComplexFacility.get().removeTraining(current_training);
-            updatedPreviousCoach.get().removeTraining(current_training);
-
-            complexFacility.addTraining(current_training);
-            coach.addTraining(current_training);
-            complexFacility.setTrainingsAmount(complexFacility.getTrainingsAmount() + 1);
-
-            trainingRepo.save(current_training);
-        } else {
+        complexFacility.addTraining(current_training);
+        coach.addTraining(current_training);
+        complexFacility.setTrainingsAmount(complexFacility.getTrainingsAmount() + 1);
+        trainingRepo.save(current_training);
+        } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
         }
 

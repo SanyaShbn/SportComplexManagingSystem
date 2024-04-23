@@ -19,7 +19,7 @@ public class UserRestTest {
 
     @Test
     public void testAuthentication() throws Exception {
-        this.mockMvc.perform(post("/login").content("{\"user_login\":\"volga_fr@mail.ru\", \"user_password\":\"volga_1\"}").
+        this.mockMvc.perform(post("/login").content("{\"user_login\":\"admin@gmail.com\", \"user_password\":\"admin\"}").
                         header(HttpHeaders.CONTENT_TYPE, "application/json")).
                 andDo(print()).andExpect(status().isOk());
     }
