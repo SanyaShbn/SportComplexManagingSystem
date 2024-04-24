@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,7 @@ public class LoginController {
     @Autowired
     private UserRepo userRepo;
 
-    @RequestMapping(value="/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> getToken(@RequestBody AccountCredentials credentials) {
         UsernamePasswordAuthenticationToken creds =
                 new UsernamePasswordAuthenticationToken(
@@ -62,7 +63,7 @@ public class LoginController {
 
     }
 
-    @RequestMapping(value="/register", method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity<?> register(@RequestBody AccountCredentials credentials) {
         Optional<User> user = userRepo.findByEmail(credentials.getUserLogin());
         User registered_user = user.get();
@@ -71,14 +72,40 @@ public class LoginController {
         registered_user.setUserPassword(password);
         registered_user.setStatus("active");
 
-        if(userRepo.findByUserLogin(credentials.getUserLogin()).isEmpty()){
+        if (userRepo.findByUserLogin(credentials.getUserLogin()).isEmpty()) {
             userRepo.save(registered_user);
             return ResponseEntity.ok().build();
-        }
-        else {
+        } else {
             return ResponseEntity.badRequest().build();
         }
 
+    }
+
+    @RequestMapping(value = "/update_admin_profile", method = RequestMethod.POST)
+    public ResponseEntity<?> updateAdminProfile(@RequestBody User user) {
+        try {
+            User updated_admin = userRepo.findByUserLogin(user.getEmail()).get();
+            updated_admin.setFirstName(user.getFirstName());
+            updated_admin.setSurName(user.getSurName());
+            updated_admin.setPatrSurName(user.getPatrSurName());
+            updated_admin.setPhoneNumber(user.getPhoneNumber());
+            if (user.getUserPassword() != null) {
+                if(!user.getUserPassword().isEmpty()) {
+                    String password = new BCryptPasswordEncoder().encode(user.getUserPassword());
+                    updated_admin.setUserPassword(password);
+                }
+            }
+            updated_admin.setStatus("active");
+            if (!updated_admin.getUserLogin().equals(user.getUserLogin()) &&
+                    userRepo.findByUserLogin(user.getUserLogin()).isEmpty()) {
+                updated_admin.setEmail(user.getUserLogin());
+                updated_admin.setUserLogin(user.getUserLogin());
+            }
+            userRepo.save(updated_admin);
+            return ResponseEntity.ok().build();
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
 }
