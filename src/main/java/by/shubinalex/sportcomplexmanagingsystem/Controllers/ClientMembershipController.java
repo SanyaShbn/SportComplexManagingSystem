@@ -5,6 +5,7 @@ import by.shubinalex.sportcomplexmanagingsystem.repo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @RestController
@@ -29,6 +30,7 @@ public class ClientMembershipController {
         SportComplexMembership sportComplexMembership = sportComplexMembershipRepo.findById(membershipId).orElseThrow(RuntimeException::new);
         clientMembership.setClient(client);
         clientMembership.setSportComplexMembership(sportComplexMembership);
+        clientMembership.setSoldAt(LocalDate.now());
         clientMembershipRepo.save(clientMembership);
     }
 
@@ -39,6 +41,7 @@ public class ClientMembershipController {
             SportComplexMembership sportComplexMembership = sportComplexMembershipRepo.findById(membershipId).orElseThrow(RuntimeException::new);
             clientMembership.setSportComplexMembership(sportComplexMembership);
             clientMembership.setClient(client);
+            clientMembership.setSoldAt(LocalDate.now());
             clientMembershipRepo.save(clientMembership);
     }
     @RequestMapping(value = "/api/deleteClientMemberships", method = RequestMethod.DELETE)

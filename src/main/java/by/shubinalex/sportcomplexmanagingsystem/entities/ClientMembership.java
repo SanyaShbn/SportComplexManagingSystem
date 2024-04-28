@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -23,6 +25,8 @@ public class ClientMembership {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
     private Client client;
+
+    private LocalDate soldAt;
 
     public void setSportComplexMembership(SportComplexMembership sportComplexMembership){
         this.sportComplexMembership = sportComplexMembership;
