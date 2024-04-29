@@ -27,6 +27,7 @@ public class ClientMembership {
     private Client client;
 
     private LocalDate soldAt;
+    private Double revenue;
 
     public void setSportComplexMembership(SportComplexMembership sportComplexMembership){
         this.sportComplexMembership = sportComplexMembership;

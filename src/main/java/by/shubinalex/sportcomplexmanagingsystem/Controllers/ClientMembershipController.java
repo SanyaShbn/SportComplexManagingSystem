@@ -31,6 +31,7 @@ public class ClientMembershipController {
         clientMembership.setClient(client);
         clientMembership.setSportComplexMembership(sportComplexMembership);
         clientMembership.setSoldAt(LocalDate.now());
+        clientMembership.setRevenue(sportComplexMembership.getCost());
         clientMembershipRepo.save(clientMembership);
     }
 
@@ -42,6 +43,7 @@ public class ClientMembershipController {
             clientMembership.setSportComplexMembership(sportComplexMembership);
             clientMembership.setClient(client);
             clientMembership.setSoldAt(LocalDate.now());
+            clientMembership.setRevenue(sportComplexMembership.getCost());
             clientMembershipRepo.save(clientMembership);
     }
     @RequestMapping(value = "/api/deleteClientMemberships", method = RequestMethod.DELETE)
