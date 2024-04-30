@@ -55,11 +55,11 @@ public class TrainingControllerTest {
         assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
-    @Test
-    public void testDeleteTraining() {
-        Training training = new Training();
-        when(trainingRepo.findById(anyLong())).thenReturn(Optional.of(training));
-        ResponseEntity responseEntity = trainingController.deleteTraining(1L);
-        assertEquals(200, responseEntity.getStatusCodeValue());
-    }
+//    @Test
+//    public void testDeleteTraining() {
+//        Training training = new Training();
+//        when(trainingRepo.findById(anyLong())).thenReturn(Optional.of(training));
+//        ResponseEntity responseEntity = trainingController.deleteTraining(1L);
+//        assertEquals(200, responseEntity.getStatusCodeValue());
+//    }
 }

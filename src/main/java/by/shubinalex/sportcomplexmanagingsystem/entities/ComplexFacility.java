@@ -21,11 +21,11 @@ import java.util.List;
         "handler"})
 public class ComplexFacility {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private long idComplexFacility;
-    private String facilityType;
+    private String name;
     private int trainingsAmount;
-    private LocalDateTime cleaningServiceTime;
+    private int capacity;
 
     @Builder.Default
     @JsonIgnore
@@ -36,13 +36,6 @@ public class ComplexFacility {
     @JsonIgnore
     @OneToMany(mappedBy = "complexFacility")
     private List<EmployeeFacility> employeeFacilities = new ArrayList<>();
-
-    public ComplexFacility(String facilityType, int trainingsAmount, LocalDateTime cleaningServiceTime) {
-        super();
-        this.facilityType = facilityType;
-        this.trainingsAmount = trainingsAmount;
-        this.cleaningServiceTime = cleaningServiceTime;
-    }
 
     public void addTraining(Training training){
         trainings.add(training);

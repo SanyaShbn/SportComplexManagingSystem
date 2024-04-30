@@ -18,7 +18,7 @@ import java.util.List;
 @ToString
 public class SportComplexMembership {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private long idSportComplexMembership;
     @Column(unique = true)
     private String name;
