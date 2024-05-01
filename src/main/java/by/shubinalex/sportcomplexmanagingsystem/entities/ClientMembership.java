@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Builder
 public class ClientMembership {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long idClientMembership;
 
     @ManyToOne(fetch = FetchType.LAZY)

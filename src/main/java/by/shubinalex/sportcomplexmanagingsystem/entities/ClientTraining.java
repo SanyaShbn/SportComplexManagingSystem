@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ClientTraining {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long idClientTraining;
 
     private String status;
