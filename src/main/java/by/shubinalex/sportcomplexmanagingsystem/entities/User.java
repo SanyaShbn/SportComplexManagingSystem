@@ -41,8 +41,6 @@ public class User {
     @Column(unique = true)
     private String phoneNumber;
     private LocalDate birthDate;
-    private double salary;
-    private double additionalSalary;
 
     @Builder.Default
     @JsonIgnore

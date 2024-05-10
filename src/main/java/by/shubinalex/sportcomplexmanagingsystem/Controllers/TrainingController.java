@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -89,16 +90,16 @@ public class TrainingController {
     }
 
     @RequestMapping(value = "/api/trainings/{id}", method = RequestMethod.PUT)
-    public ResponseEntity updateTraining(@RequestBody Training updated_training, @PathVariable Long id, @RequestParam Long complexFacilityId,
+    public ResponseEntity updateTraining(@RequestBody ArrayList<String> updated_training, @PathVariable Long id, @RequestParam Long complexFacilityId,
                                          @RequestParam Long userId) {
         Training current_training = trainingRepo.findById(id).orElseThrow(RuntimeException::new);
-        current_training.setCost(updated_training.getCost());
-        current_training.setName(updated_training.getName());
-        current_training.setCapacity(updated_training.getCapacity());
-        current_training.setType(updated_training.getType());
+        current_training.setCost(Double.valueOf(updated_training.get(0)));
+        current_training.setName(updated_training.get(1));
+        current_training.setCapacity(Integer.parseInt(updated_training.get(2)));
+        current_training.setType(updated_training.get(3));
         try{
-        ComplexFacility complexFacility = complexFacilityRepo.findById(complexFacilityId).orElseThrow(RuntimeException::new);;
         User coach = userRepo.findById(userId).orElseThrow(RuntimeException::new);
+        ComplexFacility complexFacility = complexFacilityRepo.findById(complexFacilityId).orElseThrow(RuntimeException::new);
 
         Optional<ComplexFacility> updatedPreviousComplexFacility = complexFacilityRepo.findById(current_training.getComplexFacility().getIdComplexFacility());
         Optional<User> updatedPreviousCoach = userRepo.findById(current_training.getCoach().getUserId());
