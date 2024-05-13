@@ -22,7 +22,6 @@ public class UserController {
         Optional<User> updated_status_user = userRepo.findByUserLogin(user.getUserLogin());
         updated_status_user.get().setStatus(user.getStatus());
         userRepo.save(updated_status_user.get());
-
     }
     @RequestMapping(value = "/api/view_coaches",method = RequestMethod.GET)
     public Iterable<User> getCoaches() {

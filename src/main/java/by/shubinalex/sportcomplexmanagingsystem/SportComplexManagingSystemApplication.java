@@ -2,7 +2,7 @@ package by.shubinalex.sportcomplexmanagingsystem;
 
 import by.shubinalex.sportcomplexmanagingsystem.entities.*;
 import by.shubinalex.sportcomplexmanagingsystem.repo.*;
-import by.shubinalex.sportcomplexmanagingsystem.service.ClientService;
+//import by.shubinalex.sportcomplexmanagingsystem.service.ClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 @SpringBootApplication
-@EnableScheduling
+//@EnableScheduling
 @EnableMethodSecurity
 public class SportComplexManagingSystemApplication implements CommandLineRunner {
 

@@ -6,6 +6,7 @@ import by.shubinalex.sportcomplexmanagingsystem.repo.ClientRepo;
 import by.shubinalex.sportcomplexmanagingsystem.repo.ClientTrainingRepo;
 import by.shubinalex.sportcomplexmanagingsystem.repo.ComplexFacilityRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -25,6 +26,18 @@ public class ClientController {
     @RequestMapping(value = "/api/view_clients", method = RequestMethod.GET)
     public Iterable<Client> getClients() {
         return clientRepo.findAll();
+    }
+
+    @RequestMapping(value = "/api/clients/{id}", method = RequestMethod.PUT)
+    public ResponseEntity updateClient(@RequestBody Client updated_client, @PathVariable Long id) {
+        Client current_client = clientRepo.findById(id).orElseThrow(RuntimeException::new);
+        current_client.setFirstName(updated_client.getFirstName());
+        current_client.setSurName(updated_client.getSurName());
+        current_client.setPatrSurName(updated_client.getPatrSurName());
+        current_client.setPhoneNumber(updated_client.getPhoneNumber());
+        current_client.setEmail(updated_client.getEmail());
+        clientRepo.save(current_client);
+        return ResponseEntity.ok().build();
     }
 
     @RequestMapping(value = "/api/clients/{id}", method = RequestMethod.DELETE)

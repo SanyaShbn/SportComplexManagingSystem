@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +21,10 @@ public class Client {
     private String firstName;
     private String surName;
     private String patrSurName;
+    private LocalDate birthDate;
     @Column(unique = true)
     private String phoneNumber;
+    @Column(unique = true)
     private String email;
 
     @Builder.Default
