@@ -101,12 +101,15 @@ public class TrainingController {
         User coach = userRepo.findById(userId).orElseThrow(RuntimeException::new);
         ComplexFacility complexFacility = complexFacilityRepo.findById(complexFacilityId).orElseThrow(RuntimeException::new);
 
-        Optional<ComplexFacility> updatedPreviousComplexFacility = complexFacilityRepo.findById(current_training.getComplexFacility().getIdComplexFacility());
-        Optional<User> updatedPreviousCoach = userRepo.findById(current_training.getCoach().getUserId());
-        updatedPreviousComplexFacility.get().setTrainingsAmount(updatedPreviousComplexFacility.get().getTrainingsAmount() - 1);
-        updatedPreviousComplexFacility.get().removeTraining(current_training);
-        updatedPreviousCoach.get().removeTraining(current_training);
-
+        if(current_training.getComplexFacility() != null) {
+            Optional<ComplexFacility> updatedPreviousComplexFacility = complexFacilityRepo.findById(current_training.getComplexFacility().getIdComplexFacility());
+            updatedPreviousComplexFacility.get().setTrainingsAmount(updatedPreviousComplexFacility.get().getTrainingsAmount() - 1);
+            updatedPreviousComplexFacility.get().removeTraining(current_training);
+        }
+        if(current_training.getCoach() != null) {
+            Optional<User> updatedPreviousCoach = userRepo.findById(current_training.getCoach().getUserId());
+            updatedPreviousCoach.get().removeTraining(current_training);
+        }
         complexFacility.addTraining(current_training);
         coach.addTraining(current_training);
         complexFacility.setTrainingsAmount(complexFacility.getTrainingsAmount() + 1);

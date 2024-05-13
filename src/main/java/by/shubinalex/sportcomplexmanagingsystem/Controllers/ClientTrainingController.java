@@ -28,6 +28,9 @@ public class ClientTrainingController {
     public ResponseEntity saveClientTraining(@RequestParam Long trainingId, @RequestParam Long clientId) {
         ClientTraining clientTraining = new ClientTraining();
         Training training = trainingRepo.findById(trainingId).orElseThrow(RuntimeException::new);
+        if(training.getCapacity() == training.getClients_amount()){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
         Client client = clientRepo.findById(clientId).orElseThrow(RuntimeException::new);
         for(ClientTraining client_training : clientTrainingRepo.findAll()){
             if(client_training.getClient().getIdClient() == clientId &&
@@ -58,12 +61,15 @@ public class ClientTrainingController {
         Training previous_training = clientTraining.getTraining();
         clientTraining.setTraining(training);
         clientTraining.setClient(client);
-        clientTrainingRepo.save(clientTraining);
         if(previous_training.getIdTraining() != trainingId) {
+            if(training.getCapacity() == training.getClients_amount()){
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
             previous_training.setClients_amount(previous_training.getClients_amount() - 1);
             training.setClients_amount(training.getClients_amount() + 1);
             trainingRepo.save(training); trainingRepo.save(previous_training);
         }
+        clientTrainingRepo.save(clientTraining);
         return ResponseEntity.ok(training);
     }
 
