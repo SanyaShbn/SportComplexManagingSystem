@@ -32,9 +32,9 @@ public class ComplexFacilityController {
             updated_training.setComplexFacility(null);
             trainingRepo.save(updated_training);
         }
-        List<Event> events = eventRepo.findByText(deleting_facility.getName() + " №"
-        + deleting_facility.getIdComplexFacility());
-        eventRepo.deleteAll(events);
+
+        eventRepo.delete(eventRepo.findByText("Уборка и обслуживание. " + deleting_facility.getName() + " №"
+                + deleting_facility.getIdComplexFacility()).get());
         complexFacilityRepo.delete(deleting_facility);
     }
     @RequestMapping(value = "/api/complexFacilities/{id}",method = RequestMethod.PUT)
@@ -45,9 +45,8 @@ public class ComplexFacilityController {
             updated_training.setComplexFacility(null);
             trainingRepo.save(updated_training);
         }
-        List<Event> events = eventRepo.findByText(complex_facility.getName() + " №"
-                + complex_facility.getIdComplexFacility());
-        eventRepo.deleteAll(events);
+        eventRepo.delete(eventRepo.findByText("Уборка и обслуживание. " + updating_facility.getName() + " №"
+                + updating_facility.getIdComplexFacility()).get());
         updating_facility.setName(complex_facility.getName());
         updating_facility.setCapacity(complex_facility.getCapacity());
         updating_facility.setTrainingsAmount(0);

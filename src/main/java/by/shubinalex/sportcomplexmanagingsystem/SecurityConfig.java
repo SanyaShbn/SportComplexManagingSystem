@@ -50,21 +50,21 @@ public class SecurityConfig{
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(CsrfConfigurer:: disable)
-                .authorizeHttpRequests((authz) -> authz
-                        .anyRequest().permitAll());
-
 //        http.csrf(CsrfConfigurer:: disable)
-//                .sessionManagement((session) -> session
-//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                )
 //                .authorizeHttpRequests((authz) -> authz
-//                        .requestMatchers(HttpMethod.POST, "/login", "/register").permitAll()
-//                        .anyRequest().authenticated()
-//                )
-//                .exceptionHandling((ex) -> ex
-//                        .authenticationEntryPoint(exceptionHandler)
-//                ).addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//                        .anyRequest().permitAll());
+
+        http.csrf(CsrfConfigurer:: disable)
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authorizeHttpRequests((authz) -> authz
+                        .requestMatchers(HttpMethod.POST, "/login", "/register").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .exceptionHandling((ex) -> ex
+                        .authenticationEntryPoint(exceptionHandler)
+                ).addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

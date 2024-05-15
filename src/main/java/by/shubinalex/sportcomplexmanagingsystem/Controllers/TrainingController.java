@@ -83,8 +83,9 @@ public class TrainingController {
             sportComplexMembership.setCompleteVisitsAmount(sportComplexMembership.getCompleteVisitsAmount() - delTrainingMembership.getVisitsAmount());
             trainingMembershipRepo.deleteById(delTrainingMembership.getIdTrainingMembership());
         }
-        List<Event> events = eventRepo.findByText("Тренировка №" + training.get().getIdTraining());
-        eventRepo.deleteAll(events);
+
+        eventRepo.delete(eventRepo.findByText("Тренировка №" + training.get().getIdTraining() +
+                ". " + training.get().getName()).get());
         trainingRepo.deleteById(id);
         return ResponseEntity.ok().build();
     }
@@ -114,6 +115,8 @@ public class TrainingController {
         coach.addTraining(current_training);
         complexFacility.setTrainingsAmount(complexFacility.getTrainingsAmount() + 1);
         trainingRepo.save(current_training);
+        eventRepo.delete(eventRepo.findByText("Тренировка №" + current_training.getIdTraining() +
+                    ". " + current_training.getName()).get());
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
         }

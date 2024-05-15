@@ -24,6 +24,4 @@ public class Event {
     private int event_pid;
     private String data_type;
     private String description;
-
-
 }
