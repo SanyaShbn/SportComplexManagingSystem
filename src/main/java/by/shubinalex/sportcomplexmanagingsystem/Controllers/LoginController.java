@@ -52,8 +52,9 @@ public class LoginController {
                 .collect(Collectors.toList());
 
         String status = userRepo.findByUserLogin(credentials.getUserLogin()).get().getStatus();
+        String user_id = String.valueOf(userRepo.findByUserLogin(credentials.getUserLogin()).get().getUserId());
         // Generate token
-        String jwts = jwtService.getToken(auth.getName(), roles, status);
+        String jwts = jwtService.getToken(user_id, auth.getName(), roles, status);
 
         // Build response with the generated token
         return ResponseEntity.ok()

@@ -46,7 +46,7 @@ public class EventControllerTest {
         Event event = new Event();
         when(eventRepo.findById(anyLong())).thenReturn(Optional.of(event));
         when(eventRepo.save(any(Event.class))).thenReturn(event);
-        String response = eventController.updateEvent(1L, event);
+        String response = eventController.updateEvent(1L, event, "alex_sh@gmail.com");
         assertEquals("Updated", response);
     }
 

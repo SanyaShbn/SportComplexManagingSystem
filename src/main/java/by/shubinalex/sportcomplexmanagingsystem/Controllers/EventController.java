@@ -1,9 +1,12 @@
 package by.shubinalex.sportcomplexmanagingsystem.Controllers;
 
 import by.shubinalex.sportcomplexmanagingsystem.entities.Event;
+import by.shubinalex.sportcomplexmanagingsystem.entities.Role;
 import by.shubinalex.sportcomplexmanagingsystem.entities.Training;
+import by.shubinalex.sportcomplexmanagingsystem.entities.User;
 import by.shubinalex.sportcomplexmanagingsystem.repo.EventRepo;
 import by.shubinalex.sportcomplexmanagingsystem.repo.TrainingRepo;
+import by.shubinalex.sportcomplexmanagingsystem.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +26,8 @@ public class EventController {
     private EventRepo eventRepo;
     @Autowired
     private TrainingRepo trainingRepo;
+    @Autowired
+    private UserRepo userRepo;
 
     @RequestMapping(value = "/api/events", method = RequestMethod.GET)
     public @ResponseBody Iterable<Event> getAllEvents() {
@@ -31,7 +36,7 @@ public class EventController {
 
     @RequestMapping(value = "/api/events", method = RequestMethod.POST)
     public @ResponseBody String addNewEvent (@RequestBody Event event) {
-        if(isEventDurationOverlapping(event)) {
+        if(isEventDurationOverlapping(event.getId(), event)) {
             return "Event duration is overlapping with other events. Cannot save.";
         }
         eventRepo.save(event);
@@ -39,11 +44,27 @@ public class EventController {
     }
 
     @RequestMapping(value = "/api/events/{id}", method = RequestMethod.PUT)
-    public @ResponseBody String updateEvent(@PathVariable("id") Long id, @RequestBody Event eventDetails) {
+    public @ResponseBody String updateEvent(@PathVariable("id") Long id, @RequestBody Event eventDetails,
+                                            @RequestParam String userLogin) {
         Optional<Event> optionalEvent = eventRepo.findById(id);
         Event event;
         event = optionalEvent.orElseGet(() -> eventRepo.findByText(eventDetails.getText()).get());
-        if(isEventDurationOverlapping(eventDetails)) {
+        Optional<User> user = userRepo.findByUserLogin(userLogin);
+        if(user.isPresent()){
+            if(user.get().getRole() == Role.COACH){
+                boolean is_available_for_update = false;
+                Long training_id = Long.parseLong(event.getText().replaceAll("\\D+", ""));
+                Optional<Training> updated_training = trainingRepo.findById(training_id);
+                for(Training training: user.get().getTrainings()){
+                    if(updated_training.isPresent() && training.getIdTraining() == training_id){
+                        is_available_for_update = true; break;
+                    }
+                }
+                if(!is_available_for_update){return "Access denied!";}
+            }
+
+        }
+        if(isEventDurationOverlapping(event.getId(), eventDetails)) {
             return "Event duration is overlapping with other events. Cannot save.";
         }
         event.setText(eventDetails.getText());
@@ -64,7 +85,7 @@ public class EventController {
         return "Deleted";
     }
 
-    private boolean isEventDurationOverlapping(Event event) {
+    private boolean isEventDurationOverlapping(Long id, Event event) {
         Iterable<Event> allEvents = eventRepo.findAll();
         Long event_id = Long.parseLong(event.getText().replaceAll("\\D+", ""));
         Optional<Training> training = trainingRepo.findById(event_id);
@@ -75,7 +96,7 @@ public class EventController {
         LocalDateTime eventEndDate = instant_end_date.atZone(ZoneId.systemDefault()).toLocalDateTime();
 
         for (Event e : allEvents) {
-            if (!Objects.equals(e.getId(), event_id)) {
+            if (!Objects.equals(e.getId(), id)) {
                 Instant other_instant_start_date = Instant.parse(e.getStart_date());
                 Instant other_instant_end_date = Instant.parse(e.getEnd_date());
                 LocalDateTime otherEventStartDate = other_instant_start_date.atZone(ZoneId.systemDefault()).toLocalDateTime();

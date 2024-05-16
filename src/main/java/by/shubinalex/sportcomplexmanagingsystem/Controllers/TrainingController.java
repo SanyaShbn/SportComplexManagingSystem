@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -60,8 +61,13 @@ public class TrainingController {
     }
 
     @RequestMapping(value = "/api/trainings/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity deleteTraining(@PathVariable Long id) {
+    public ResponseEntity deleteTraining(@PathVariable Long id, @RequestParam String userLogin) {
         Optional<Training> training = trainingRepo.findById(id);
+        Optional<User> user = userRepo.findByUserLogin(userLogin);
+        if(user.get().getRole() == Role.COACH &&
+                !Objects.equals(user.get().getUserId(), training.get().getCoach().getUserId())){
+            return ResponseEntity.badRequest().build();
+        }
         if(training.get().getComplexFacility() != null) {
             Optional<ComplexFacility> updatedComplexFacility = complexFacilityRepo.findById(training.get().getComplexFacility().getIdComplexFacility());
             updatedComplexFacility.get().setTrainingsAmount(updatedComplexFacility.get().getTrainingsAmount() - 1);
@@ -83,9 +89,9 @@ public class TrainingController {
             sportComplexMembership.setCompleteVisitsAmount(sportComplexMembership.getCompleteVisitsAmount() - delTrainingMembership.getVisitsAmount());
             trainingMembershipRepo.deleteById(delTrainingMembership.getIdTrainingMembership());
         }
-
-        eventRepo.delete(eventRepo.findByText("Тренировка №" + training.get().getIdTraining() +
-                ". " + training.get().getName()).get());
+        Optional<Event> deletingEvent = eventRepo.findByText("Тренировка №" + training.get().getIdTraining() +
+                ". " + training.get().getName());
+        deletingEvent.ifPresent(event -> eventRepo.delete(event));
         trainingRepo.deleteById(id);
         return ResponseEntity.ok().build();
     }
@@ -115,8 +121,9 @@ public class TrainingController {
         coach.addTraining(current_training);
         complexFacility.setTrainingsAmount(complexFacility.getTrainingsAmount() + 1);
         trainingRepo.save(current_training);
-        eventRepo.delete(eventRepo.findByText("Тренировка №" + current_training.getIdTraining() +
-                    ". " + current_training.getName()).get());
+        Optional<Event> deletingEvent = eventRepo.findByText("Тренировка №" + current_training.getIdTraining() +
+                    ". " + current_training.getName());
+        deletingEvent.ifPresent(event -> eventRepo.delete(event));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
         }
