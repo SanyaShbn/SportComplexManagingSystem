@@ -51,7 +51,7 @@ public class TrainingControllerTest {
         Training training = new Training();
         when(complexFacilityRepo.findById(anyLong())).thenReturn(Optional.of(new ComplexFacility()));
         when(userRepo.findById(anyLong())).thenReturn(Optional.of(new User()));
-        ResponseEntity responseEntity = trainingController.saveTrainingWithComplexFacility(training, 1L, 1L);
+        ResponseEntity responseEntity = trainingController.saveTraining(training, 1L, 1L);
         assertEquals(200, responseEntity.getStatusCodeValue());
     }
 

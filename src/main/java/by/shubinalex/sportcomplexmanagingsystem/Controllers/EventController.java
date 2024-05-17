@@ -46,21 +46,25 @@ public class EventController {
     @RequestMapping(value = "/api/events/{id}", method = RequestMethod.PUT)
     public @ResponseBody String updateEvent(@PathVariable("id") Long id, @RequestBody Event eventDetails,
                                             @RequestParam String userLogin) {
-        Optional<Event> optionalEvent = eventRepo.findById(id);
-        Event event;
-        event = optionalEvent.orElseGet(() -> eventRepo.findByText(eventDetails.getText()).get());
+        Event event = eventRepo.findById(id).orElseThrow(RuntimeException::new);
+//        event = optionalEvent.orElseGet(() -> eventRepo.findByText(eventDetails.getText()));
         Optional<User> user = userRepo.findByUserLogin(userLogin);
         if(user.isPresent()){
             if(user.get().getRole() == Role.COACH){
                 boolean is_available_for_update = false;
                 Long training_id = Long.parseLong(event.getText().replaceAll("\\D+", ""));
                 Optional<Training> updated_training = trainingRepo.findById(training_id);
-                for(Training training: user.get().getTrainings()){
-                    if(updated_training.isPresent() && training.getIdTraining() == training_id){
-                        is_available_for_update = true; break;
+                if(updated_training.isPresent()) {
+                    for (Training training : user.get().getTrainings()) {
+                        if (training.getIdTraining() == training_id) {
+                            is_available_for_update = true;
+                            break;
+                        }
                     }
-                }
-                if(!is_available_for_update){return "Access denied!";}
+                    if (!is_available_for_update) {
+                        return "Access denied!";
+                    }
+                }else{return "Access denied!";}
             }
 
         }
@@ -80,8 +84,30 @@ public class EventController {
     }
 
     @RequestMapping(value = "/api/events/{id}", method = RequestMethod.DELETE)
-    public @ResponseBody String deleteEvent(@PathVariable("id") Long id) {
-        eventRepo.deleteById(id);
+    public @ResponseBody String deleteEvent(@PathVariable("id") Long id, @RequestParam String userLogin, @RequestParam String eventText) {
+        Event event = eventRepo.findById(id).orElseThrow(RuntimeException::new);
+//        event = optionalEvent.orElseGet(() -> eventRepo.findByText(eventText).get());
+        Optional<User> user = userRepo.findByUserLogin(userLogin);
+        if(user.isPresent()){
+            if(user.get().getRole() == Role.COACH){
+                boolean is_available_for_update = false;
+                Long training_id = Long.parseLong(event.getText().replaceAll("\\D+", ""));
+                Optional<Training> deleting_training = trainingRepo.findById(training_id);
+                if(deleting_training.isPresent()) {
+                    for (Training training : user.get().getTrainings()) {
+                        if (training.getIdTraining() == training_id) {
+                            is_available_for_update = true;
+                            break;
+                        }
+                    }
+                    if (!is_available_for_update) {
+                        return "Access denied!";
+                    }
+                }else{return "Access denied!";}
+            }
+
+        }
+        eventRepo.delete(event);
         return "Deleted";
     }
 

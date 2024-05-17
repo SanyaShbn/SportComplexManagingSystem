@@ -39,7 +39,7 @@ public class TrainingController {
     }
 
     @RequestMapping(value = "/api/save_trainings", method = RequestMethod.POST)
-    public ResponseEntity saveTrainingWithComplexFacility(@RequestBody Training training, @RequestParam Long complexFacilityId,
+    public ResponseEntity saveTraining(@RequestBody Training training, @RequestParam Long complexFacilityId,
                                                 @RequestParam Long userId) {
 
         Optional<ComplexFacility> complexFacilityOptional = complexFacilityRepo.findById(complexFacilityId);
@@ -89,9 +89,9 @@ public class TrainingController {
             sportComplexMembership.setCompleteVisitsAmount(sportComplexMembership.getCompleteVisitsAmount() - delTrainingMembership.getVisitsAmount());
             trainingMembershipRepo.deleteById(delTrainingMembership.getIdTrainingMembership());
         }
-        Optional<Event> deletingEvent = eventRepo.findByText("Тренировка №" + training.get().getIdTraining() +
+        List<Event> deletingEvents = eventRepo.findByText("Тренировка №" + training.get().getIdTraining() +
                 ". " + training.get().getName());
-        deletingEvent.ifPresent(event -> eventRepo.delete(event));
+        eventRepo.deleteAll(deletingEvents);
         trainingRepo.deleteById(id);
         return ResponseEntity.ok().build();
     }
@@ -121,9 +121,9 @@ public class TrainingController {
         coach.addTraining(current_training);
         complexFacility.setTrainingsAmount(complexFacility.getTrainingsAmount() + 1);
         trainingRepo.save(current_training);
-        Optional<Event> deletingEvent = eventRepo.findByText("Тренировка №" + current_training.getIdTraining() +
+        List<Event> deletingEvents = eventRepo.findByText("Тренировка №" + current_training.getIdTraining() +
                     ". " + current_training.getName());
-        deletingEvent.ifPresent(event -> eventRepo.delete(event));
+        eventRepo.deleteAll(deletingEvents);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
         }

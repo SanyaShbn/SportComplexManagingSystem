@@ -47,12 +47,26 @@ public class User {
     @OneToMany(mappedBy = "coach", fetch=FetchType.LAZY)
     private List<Training> trainings = new ArrayList<>();
 
+    @Builder.Default
+    @JsonIgnore
+    @OneToMany(mappedBy = "cleaner", fetch=FetchType.LAZY)
+    private List<ComplexFacility> complexFacilities = new ArrayList<>();
+
     public void addTraining(Training training){
         trainings.add(training);
         training.setCoach(this);
     }
+
+    public void addComplexFacility(ComplexFacility complexFacility){
+        complexFacilities.add(complexFacility);
+        complexFacility.setCleaner(this);
+    }
     public void removeTraining(Training training){
         trainings.remove(training);
+    }
+    public void removeComplexFacility(ComplexFacility complexFacility){
+        complexFacilities.remove(complexFacility);
+        complexFacility.setCleaner(null);
     }
 //    public User(String userLogin, String userPassword, String firstName,
 //                String surName, String patrSurName, Role role, String post, String phoneNumber,

@@ -28,6 +28,11 @@ public class UserController {
         return userRepo.findByRole(Role.valueOf(Role.COACH.getAuthority()));
     }
 
+    @RequestMapping(value = "/api/view_cleaners",method = RequestMethod.GET)
+    public Iterable<User> getCleaners() {
+        return userRepo.findByRole(Role.valueOf(Role.CLEANER.getAuthority()));
+    }
+
     @RequestMapping(value = "/api/user_profile",method = RequestMethod.GET)
     public Optional<User> getUser(@RequestParam String userLogin) {
         return userRepo.findByUserLogin(userLogin);
