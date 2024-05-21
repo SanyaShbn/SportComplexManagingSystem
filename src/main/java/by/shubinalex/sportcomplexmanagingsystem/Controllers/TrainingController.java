@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @RestController
 public class TrainingController {
@@ -35,7 +37,9 @@ public class TrainingController {
 
     @RequestMapping(value = "/api/view_trainings", method = RequestMethod.GET)
     public Iterable<Training> getTrainings() {
-        return trainingRepo.findAll();
+        return StreamSupport.stream(trainingRepo.findAll().spliterator(), false)
+                .filter(training -> training.getCoach() != null && training.getComplexFacility() != null)
+                .collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/api/save_trainings", method = RequestMethod.POST)

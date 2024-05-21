@@ -47,7 +47,6 @@ public class EventController {
     public @ResponseBody String updateEvent(@PathVariable("id") Long id, @RequestBody Event eventDetails,
                                             @RequestParam String userLogin) {
         Event event = eventRepo.findById(id).orElseThrow(RuntimeException::new);
-//        event = optionalEvent.orElseGet(() -> eventRepo.findByText(eventDetails.getText()));
         Optional<User> user = userRepo.findByUserLogin(userLogin);
         if(user.isPresent()){
             if(user.get().getRole() == Role.COACH){
@@ -84,9 +83,8 @@ public class EventController {
     }
 
     @RequestMapping(value = "/api/events/{id}", method = RequestMethod.DELETE)
-    public @ResponseBody String deleteEvent(@PathVariable("id") Long id, @RequestParam String userLogin, @RequestParam String eventText) {
+    public @ResponseBody String deleteEvent(@PathVariable("id") Long id, @RequestParam String userLogin) {
         Event event = eventRepo.findById(id).orElseThrow(RuntimeException::new);
-//        event = optionalEvent.orElseGet(() -> eventRepo.findByText(eventText).get());
         Optional<User> user = userRepo.findByUserLogin(userLogin);
         if(user.isPresent()){
             if(user.get().getRole() == Role.COACH){

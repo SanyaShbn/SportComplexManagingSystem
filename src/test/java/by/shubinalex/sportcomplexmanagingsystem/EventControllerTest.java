@@ -56,7 +56,7 @@ public class EventControllerTest {
         when(eventRepo.findById(anyLong())).thenReturn(Optional.of(event));
         when(eventRepo.save(any(Event.class))).thenReturn(event);
         doNothing().when(eventRepo).deleteById(anyLong());
-        String response = eventController.deleteEvent(1L, "alex_sh@gmail.com", "text");
+        String response = eventController.deleteEvent(1L, "alex_sh@gmail.com");
         assertEquals("Deleted", response);
     }
 }

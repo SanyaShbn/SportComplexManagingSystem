@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @RestController
 public class SportComplexMembershipController {
@@ -21,8 +24,9 @@ public class SportComplexMembershipController {
     private ClientMembershipRepo clientMembershipRepo;
     @RequestMapping(value = "/api/view_memberships", method = RequestMethod.GET)
     public Iterable<SportComplexMembership> getMemberships() {
-
-        return sportComplexMembershipRepo.findAll();
+        return StreamSupport.stream(sportComplexMembershipRepo.findAll().spliterator(), false)
+                .filter(sportComplexMembership -> !sportComplexMembership.getDurationDeadline().equals(LocalDate.now()))
+                .collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/api/sportComplexMemberships/{id}", method = RequestMethod.DELETE)
