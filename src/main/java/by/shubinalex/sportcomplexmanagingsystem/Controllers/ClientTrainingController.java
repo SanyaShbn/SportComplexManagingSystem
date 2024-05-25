@@ -40,7 +40,6 @@ public class ClientTrainingController {
         }
         clientTraining.setTraining(training);
         clientTraining.setClient(client);
-        clientTraining.setStatus("запланирована");
         clientTrainingRepo.save(clientTraining);
         training.setClients_amount(training.getClients_amount() + 1);
         trainingRepo.save(training);

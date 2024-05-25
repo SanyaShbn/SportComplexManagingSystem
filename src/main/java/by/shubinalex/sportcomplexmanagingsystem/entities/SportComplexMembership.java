@@ -1,6 +1,7 @@
 package by.shubinalex.sportcomplexmanagingsystem.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.checkerframework.common.aliasing.qual.Unique;
@@ -16,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @ToString
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class SportComplexMembership {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
