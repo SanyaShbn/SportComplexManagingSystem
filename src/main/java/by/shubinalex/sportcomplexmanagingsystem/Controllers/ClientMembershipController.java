@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
@@ -30,7 +31,7 @@ public class ClientMembershipController {
         SportComplexMembership sportComplexMembership = sportComplexMembershipRepo.findById(membershipId).orElseThrow(RuntimeException::new);
         clientMembership.setClient(client);
         clientMembership.setSportComplexMembership(sportComplexMembership);
-        clientMembership.setSoldAt(LocalDate.now());
+        clientMembership.setSoldAt(LocalDateTime.now());
         clientMembership.setRevenue(sportComplexMembership.getCost());
         clientMembershipRepo.save(clientMembership);
     }
@@ -42,7 +43,7 @@ public class ClientMembershipController {
             SportComplexMembership sportComplexMembership = sportComplexMembershipRepo.findById(membershipId).orElseThrow(RuntimeException::new);
             clientMembership.setSportComplexMembership(sportComplexMembership);
             clientMembership.setClient(client);
-            clientMembership.setSoldAt(LocalDate.now());
+            clientMembership.setSoldAt(LocalDateTime.now());
             clientMembership.setRevenue(sportComplexMembership.getCost());
             clientMembershipRepo.save(clientMembership);
     }

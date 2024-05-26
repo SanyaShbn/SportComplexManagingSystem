@@ -1,9 +1,7 @@
 package by.shubinalex.sportcomplexmanagingsystem.Controllers;
 
-import by.shubinalex.sportcomplexmanagingsystem.entities.Event;
-import by.shubinalex.sportcomplexmanagingsystem.entities.Role;
-import by.shubinalex.sportcomplexmanagingsystem.entities.Training;
-import by.shubinalex.sportcomplexmanagingsystem.entities.User;
+import by.shubinalex.sportcomplexmanagingsystem.entities.*;
+import by.shubinalex.sportcomplexmanagingsystem.repo.ComplexFacilityRepo;
 import by.shubinalex.sportcomplexmanagingsystem.repo.EventRepo;
 import by.shubinalex.sportcomplexmanagingsystem.repo.TrainingRepo;
 import by.shubinalex.sportcomplexmanagingsystem.repo.UserRepo;
@@ -28,6 +26,8 @@ public class EventController {
     private TrainingRepo trainingRepo;
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private ComplexFacilityRepo complexFacilityRepo;
 
     @RequestMapping(value = "/api/events", method = RequestMethod.GET)
     public @ResponseBody Iterable<Event> getAllEvents() {
@@ -153,6 +153,15 @@ public class EventController {
                                 return true;
                             }
                         }
+                    }else{
+                        Optional<ComplexFacility> complexFacility = complexFacilityRepo.findById(event_id);
+                        Optional<ComplexFacility> otherComplexFacility = complexFacilityRepo.findById(other_event_id);
+                        if(complexFacility.isPresent() && otherComplexFacility.isPresent()){
+                            if(complexFacility.get().getCleaner().equals(otherComplexFacility.get().getCleaner())){
+                                return true;
+                            }
+                        }
+
                     }
                 }
             }

@@ -17,6 +17,8 @@ public class ClientTraining {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long idClientTraining;
 
+    private int signingsAmount;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
     private Client client;

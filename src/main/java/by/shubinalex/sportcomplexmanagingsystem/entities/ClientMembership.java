@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -26,7 +27,7 @@ public class ClientMembership {
     @JoinColumn(name = "client_id")
     private Client client;
 
-    private LocalDate soldAt;
+    private LocalDateTime soldAt;
     private Double revenue;
 
     public void setSportComplexMembership(SportComplexMembership sportComplexMembership){

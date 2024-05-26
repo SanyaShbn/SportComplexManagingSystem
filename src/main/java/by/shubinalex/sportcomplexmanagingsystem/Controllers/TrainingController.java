@@ -42,6 +42,13 @@ public class TrainingController {
                 .collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "/api/view_trainings_for_scheduler", method = RequestMethod.GET)
+    public Iterable<Training> getTrainingsForScheduler() {
+        return StreamSupport.stream(trainingRepo.findAll().spliterator(), false)
+                .filter(training -> training.getCoach() != null && training.getComplexFacility() != null &&
+                        !training.getClientTrainings().isEmpty())
+                .collect(Collectors.toList());
+    }
     @RequestMapping(value = "/api/save_trainings", method = RequestMethod.POST)
     public ResponseEntity saveTraining(@RequestBody Training training, @RequestParam Long complexFacilityId,
                                                 @RequestParam Long userId) {
