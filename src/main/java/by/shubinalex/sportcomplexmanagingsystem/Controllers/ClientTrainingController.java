@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 
 @RestController
@@ -22,9 +24,17 @@ public class ClientTrainingController {
     @Autowired
     private UserRepo userRepo;
 
-    @RequestMapping( value = "/client_trainings", method = RequestMethod.GET)
+    @RequestMapping( value = "/api/all_client_trainings", method = RequestMethod.GET)
     public Iterable<ClientTraining> getClientTrainings() {
         return clientTrainingRepo.findAll();
+    }
+
+    @RequestMapping( value = "/api/coach_client_trainings", method = RequestMethod.GET)
+    public Iterable<ClientTraining> getCoachClientTrainings(@RequestParam String userLogin) {
+        Optional<User> coach = userRepo.findByEmail(userLogin);
+        return StreamSupport.stream(clientTrainingRepo.findAll().spliterator(), false)
+                .filter(client_training -> Objects.equals(client_training.getTraining().getCoach().getUserId(), coach.get().getUserId()))
+                .collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/api/save_client_training", method = RequestMethod.POST)

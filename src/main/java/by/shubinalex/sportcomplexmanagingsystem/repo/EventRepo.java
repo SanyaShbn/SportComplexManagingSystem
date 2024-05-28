@@ -14,4 +14,6 @@ import java.util.Optional;
 @RepositoryRestResource
 public interface EventRepo extends CrudRepository<Event, Long> {
     List<Event> findByText(String text);
+
+    Optional<Event> findById(String id);
 }

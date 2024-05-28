@@ -42,6 +42,15 @@ public class TrainingController {
                 .collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "/api/view_coach_trainings", method = RequestMethod.GET)
+    public Iterable<Training> getCoachTrainings(@RequestParam String userLogin) {
+        Optional<User> coach = userRepo.findByEmail(userLogin);
+        return StreamSupport.stream(trainingRepo.findAll().spliterator(), false)
+                .filter(training -> Objects.equals(training.getCoach().getUserId(), coach.get().getUserId())
+                        && training.getComplexFacility() != null)
+                .collect(Collectors.toList());
+    }
+
     @RequestMapping(value = "/api/view_trainings_for_scheduler", method = RequestMethod.GET)
     public Iterable<Training> getTrainingsForScheduler() {
         return StreamSupport.stream(trainingRepo.findAll().spliterator(), false)

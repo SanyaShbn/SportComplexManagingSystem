@@ -20,6 +20,7 @@ public class Training {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long idTraining;
+    @Column(unique = true)
     private String name;
     private Double cost;
     private String type;

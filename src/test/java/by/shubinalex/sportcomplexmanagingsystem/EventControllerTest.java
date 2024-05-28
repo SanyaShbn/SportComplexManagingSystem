@@ -37,7 +37,7 @@ public class EventControllerTest {
     public void testAddNewEvent() {
         Event event = new Event();
         when(eventRepo.save(any(Event.class))).thenReturn(event);
-        String response = eventController.addNewEvent(event);
+        String response = eventController.addNewEvent(event, false);
         assertEquals("Saved", response);
     }
 
@@ -46,7 +46,7 @@ public class EventControllerTest {
         Event event = new Event();
         when(eventRepo.findById(anyLong())).thenReturn(Optional.of(event));
         when(eventRepo.save(any(Event.class))).thenReturn(event);
-        String response = eventController.updateEvent(1L, event, "alex_sh@gmail.com");
+        String response = eventController.updateEvent("1716901934255", event, "alex_sh@gmail.com", false);
         assertEquals("Updated", response);
     }
 
@@ -56,7 +56,7 @@ public class EventControllerTest {
         when(eventRepo.findById(anyLong())).thenReturn(Optional.of(event));
         when(eventRepo.save(any(Event.class))).thenReturn(event);
         doNothing().when(eventRepo).deleteById(anyLong());
-        String response = eventController.deleteEvent(1L, "alex_sh@gmail.com");
+        String response = eventController.deleteEvent("1716901934255", "alex_sh@gmail.com");
         assertEquals("Deleted", response);
     }
 }
