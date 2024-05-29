@@ -121,11 +121,6 @@
             <version>5.11.0</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.impossibl.pgjdbc-ng</groupId>
-            <artifactId>pgjdbc-ng</artifactId>
-            <version>0.8.6</version>
-        </dependency>
 
     </dependencies>
 
