@@ -33,26 +33,8 @@ public class SecurityConfig{
 
     @Autowired
     private AuthEntryPoint exceptionHandler;
-
-    //        @Override
-//        protected void configure(HttpSecurity http) throws Exception {
-//            http.csrf().disable().cors().and()
-//                    .sessionManagement()
-//                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-//                    .authorizeRequests()
-//                    .antMatchers(HttpMethod.POST, "/login").permitAll()
-//                    .anyRequest().authenticated().and()
-//                    .exceptionHandling()
-//                    .authenticationEntryPoint(exceptionHandler).and()
-//                    .addFilterBefore(authenticationFilter,
-//                            UsernamePasswordAuthenticationFilter.class);
-//        }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-//        http.csrf(CsrfConfigurer:: disable)
-//                .authorizeHttpRequests((authz) -> authz
-//                        .anyRequest().permitAll());
 
         http.csrf(CsrfConfigurer:: disable)
                 .sessionManagement((session) -> session
@@ -90,11 +72,6 @@ public class SecurityConfig{
                 .passwordEncoder(new BCryptPasswordEncoder());
     }
 
-    //        @Bean
-//        public AuthenticationManager getAuthenticationManager() throws
-//                Exception {
-//            return authenticationManager();
-//        }
     @Bean
     public AuthenticationManager authenticationManager(UserDetailsServiceImpl userDetailsService) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
