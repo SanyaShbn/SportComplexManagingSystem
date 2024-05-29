@@ -9,13 +9,13 @@ public class EventTest {
     @Test
     public void testEvent() {
         Event event = new Event();
-        event.setId(1L);
+        event.setId("1716901934267");
         event.setStart_date("2024-04-20");
         event.setEnd_date("2024-04-21");
         event.setText("Test Event");
         event.setRec_type("Test Rec Type");
         event.setEvent_length(60L);
-        event.setEvent_pid(1);
+        event.setEvent_pid("1716901934255");
         event.setData_type("Test Data Type");
         event.setDescription("Test Description");
 
