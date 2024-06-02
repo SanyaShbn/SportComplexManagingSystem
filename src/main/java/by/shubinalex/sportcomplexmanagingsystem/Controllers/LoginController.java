@@ -97,11 +97,8 @@ public class LoginController {
                 }
             }
             updated_admin.setStatus("active");
-            if (!updated_admin.getUserLogin().equals(user.getUserLogin()) &&
-                    userRepo.findByUserLogin(user.getUserLogin()).isEmpty()) {
-                updated_admin.setEmail(user.getUserLogin());
-                updated_admin.setUserLogin(user.getUserLogin());
-            }
+            updated_admin.setEmail(user.getUserLogin());
+            updated_admin.setUserLogin(user.getUserLogin());
             userRepo.save(updated_admin);
             return ResponseEntity.ok().build();
         } catch (NoSuchElementException e) {
